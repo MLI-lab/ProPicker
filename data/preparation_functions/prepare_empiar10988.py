@@ -72,7 +72,7 @@ def read_empiar10988_coords(coord_file):
     coords = pd.read_csv(coord_file, sep=",", header=None)
     coords = coords.astype(int)
     coords.columns = ["X", "Y", "Z"]
-    coords["class"] = "0ref"
+    coords["class"] = "cyto_ribosome"
     coords["rx"] = "NaN"
     coords["ry"] = "NaN"
     coords["rz"] = "NaN"
