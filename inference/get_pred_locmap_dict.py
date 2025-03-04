@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from .tomotwin import get_tomotwin_prompt_embeds_dict
 
 #%%
-def get_pred_locmap_dict(model, tomo, prompt_embeds_dict=None, prompt_subtomos_dict=None, tomotwin_model_file=None, subtomo_size=64, subtomo_overlap=32, batch_size=1, subtomo_normalization="gaussian", zero_border=0, ramp_end=None, num_dataloader_workers=1):
+def get_pred_locmap_dict(model, tomo, prompt_embeds_dict=None, prompt_subtomos_dict=None, tomotwin_model_file=None, subtomo_size=64, subtomo_overlap=32, batch_size=1, mean_pool_locmaps=0, subtomo_normalization="gaussian", zero_border=0, ramp_end=None, num_dataloader_workers=1):
     ## STEP 1: embed prompts if necessary
     if prompt_embeds_dict is not None and prompt_subtomos_dict is not None:
         raise ValueError("'prompt_embeds_dict' and 'prompt_subtomos_dict' cannot both be specified!")
@@ -89,7 +89,35 @@ def get_pred_locmap_dict(model, tomo, prompt_embeds_dict=None, prompt_subtomos_d
                         subtomo_weights=subtomo_weights,
                         subtomo_overlap=subtomo_overlap
                     )
-        for cls in pred_locmap_dict.keys():
-            pred_locmap_dict[cls] = pred_locmap_dict[cls] / count_dict[cls]
-            pred_locmap_dict[cls] = pred_locmap_dict[cls][:tomo.shape[0], :tomo.shape[1], :tomo.shape[2]].cpu()
+        for cls, pred_locmap in pred_locmap_dict.items():
+            pred_locmap = pred_locmap / count_dict[cls]
+            pred_locmap = pred_locmap[:tomo.shape[0], :tomo.shape[1], :tomo.shape[2]]
+            if mean_pool_locmaps > 0:
+                pred_locmap = mean_pool(pred_locmap, num=mean_pool_locmaps)
+            pred_locmap_dict[cls] = pred_locmap.cpu()
     return pred_locmap_dict
+
+
+def mean_pool(locmap, kernel=3, num=5):
+    """
+    This function is inspired by the _nms_v2 routine used in DeepETPicker:
+    https://github.com/cbmi-group/DeepETPicker/blob/main/test.py
+    """
+    locmap_ = locmap.clone()    
+    if locmap.ndim == 3:
+        locmap_ = locmap.unsqueeze(0)
+    elif locmap.ndim == 4 or locmap.ndim == 5:
+        pass
+    else:
+        raise ValueError("locmap should be 3D (possibly with additional batch and/or channel dimensions)")
+    with torch.no_grad():
+        #locmap_ = torch.where(locmap_ > 0.5, 1, 0)
+        meanPool = torch.nn.AvgPool3d(kernel, 1, kernel // 2).to(locmap.device)
+        maxPool = torch.nn.MaxPool3d(kernel, 1, kernel // 2).to(locmap.device)
+        hmax = locmap_.clone().float()
+        for _ in range(num):
+            hmax = meanPool(hmax)    
+        locmap_ = hmax.clone()
+        locmap_ = maxPool(locmap_)
+    locmap_ = locmap_.squeeze(0)
+    return locmap_
