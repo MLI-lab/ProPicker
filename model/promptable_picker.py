@@ -104,7 +104,7 @@ class ProPicker(pl.LightningModule):
                 model_output = self.model.decode(feats, prompt=prompt)
                 output.append(model_output)
             # concat along prompt dimension
-            model_output = torch.concat(output, dim=1)  
+            model_output = torch.cat(output, dim=1)  
         return model_output
 
     def training_step(self, batch, batch_idx):
