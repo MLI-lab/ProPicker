@@ -60,17 +60,6 @@ def pass_subtomos_through_tomotwin(subtomos, tomotwin_model_file, batch_size=32,
  
     return tt_outputs
 
-def eval_tomotwin_on_mask(tomo, mask, tomotwin_model_file, batch_size, device="cpu"):
-    subtomos = []
-    tomo = torch.nn.functional.pad(tomo, (19, 19, 19, 19, 19, 19), mode="constant")
-    coords = mask.nonzero() + 19
-    for centre in coords:
-        subtomos.append(tomo[centre[0]-19:centre[0]+18, centre[1]-19:centre[1]+18, centre[2]-19:centre[2]+18])
-    subtomos = torch.stack(subtomos)
-    tt_outputs = pass_subtomos_through_tomotwin(subtomos, tomotwin_model_file, batch_size, device)
-    return tt_outputs
-
-
 def get_tomotwin_prompt_embeds_dict(prompt_subtomos_dict, tomotwin_model_file, device, batch_size=1, out_file=None):
     prompt_embeds = pass_subtomos_through_tomotwin(
         subtomos=torch.stack(list(prompt_subtomos_dict.values())),
