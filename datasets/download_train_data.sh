@@ -1,6 +1,6 @@
 # tomotwin tomograms
-mkdir -p data/tomotwin_data/tomograms
-cd data/tomotwin_data/tomograms
+mkdir -p ./tomotwin_data/tomograms
+cd ./tomotwin_data/tomograms
 wget https://zenodo.org/api/records/6637357/files-archive
 unzip files-archive
 tar -xvf *.tar.gz
