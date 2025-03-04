@@ -148,8 +148,9 @@ if use_binary_labels:
 os.system(
     f"python ./DeepETPicker_ProPicker/bin/train_bash.py \
         --train_configs '{out_dir}/configs/train.py' \
-        --network ProPicker --propicker_model_file '{PROPICKER_MODEL_FILE}' \
-        --prompt_embed_file '../fixed_prompts_empiar10988.json' \
+        --network ProPicker \
+        --propicker_model_file '{PROPICKER_MODEL_FILE}' \
+        --prompt_embed_file './fixed_prompts_empiar10988.json' \
         --loss_func_seg 'CE' \
     "
 )
