@@ -1,0 +1,3 @@
+[submodule "DeepETPicker_ProPicker"]
+	path = DeepETPicker_ProPicker
+	url = git@github.com:MLI-lab/DeepETPicker_ProPicker.git
