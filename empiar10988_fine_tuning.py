@@ -15,10 +15,10 @@ pd.options.mode.chained_assignment = None
 train_ts = ["TS_029"]
 val_ts = ["TS_030"]
 # crop train_ts to cube 2*crop_delta x 2*crop_delta x 2*crop_delta
-crop_delta = 128 
+crop_delta = 64 
 # number of epochs to train on for each crop size
 crop_delta_num_epochs_dict = {
-    64: 100,
+    64: 75,
     128: 50,
     256: 25,
     512: 15,
@@ -26,7 +26,7 @@ crop_delta_num_epochs_dict = {
 # if true, use the binary labels contained in the empiar10988 dataset; we used those for the experiments in the paper
 use_binary_labels = True
 # gpu for training
-gpu_id = 3
+gpu_id = 2
 # output directory
 out_dir = f"./fine_tuning_empiar10988/crop_delta={crop_delta}"
 

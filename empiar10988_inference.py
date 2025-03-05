@@ -14,11 +14,11 @@ from paths import EMPIAR10988_BASE_DIR, PROPICKER_MODEL_FILE
 # TS for testing, you can add more TS if you want
 test_ts = ["TS_030"]
 # modify this to point to the checkpoint file you want to test
-ckpt_file = "./fine_tuning_empiar10988/crop_delta=64/runs/train/train_ProPicker_BlockSize72_CELoss_MaxEpoch100_bs8_lr0.001_IP1_bg1_coord1_Softmax0_bn__TNNone/version_0/checkpoints/epoch=0-step=8.ckpt"
+ckpt_file = "./fine_tuning_empiar10988/crop_delta=64/runs/train/train_ProPicker_BlockSize72_CELoss_MaxEpoch100_bs8_lr0.001_IP1_bg1_coord1_Softmax0_bn__TNNone/version_0/checkpoints/epoch=29-step=269.ckpt"
 # modify this to point to the train config file you used for training
 train_cfg_file = "./fine_tuning_empiar10988/crop_delta=64/configs/train.py"
 
-gpu = 3
+gpu = 2
 batch_size = 16
 
 # data will be temporarily saved in this directory; it will be removed after testing
@@ -96,7 +96,7 @@ os.system(
     f"python ./DeepETPicker_ProPicker/bin/test_bash.py \
         --train_configs {test_cfg_file} \
         --checkpoints {ckpt_file} \
-        --de_duplication False \
+        --de_duplication True \
         --network ProPicker \
         --propicker_model_file '{PROPICKER_MODEL_FILE}' \
         --prompt_embed_file './fixed_prompts_empiar10988.json' \
