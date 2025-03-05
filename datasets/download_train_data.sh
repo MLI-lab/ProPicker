@@ -6,14 +6,11 @@ unzip files-archive
 tar -xvf *.tar.gz
 #rm files-archive
 #rm *.tar.gz
-cd ..
+cd ../..
 
 # shrec2021 data
-cd ..
-mkdir shrec2021
-cd shrec2021
-mkdir full_dataset
-cd full_dataset
+mkdir -p ./shrec2021/full_dataset
+cd ./shrec2021/full_dataset
 wget https://dataverse.nl/api/access/datafile/309089
 unzip 309089
 rm 309089
