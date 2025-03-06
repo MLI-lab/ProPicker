@@ -4,7 +4,7 @@ import os
 PROPICKER_REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # path to the ProPicker model file downloaded from Google Drive
-PROPICKER_MODEL_FILE = f"{PROPICKER_REPO_DIR}/deepetpicker.ckpt"
+PROPICKER_MODEL_FILE = f"{PROPICKER_REPO_DIR}/propicker.ckpt"
 # path to TomoTwin model file downloaded with .sh script
 TOMOTWIN_MODEL_FILE = f"{PROPICKER_REPO_DIR}/tomotwin.pth"
 
