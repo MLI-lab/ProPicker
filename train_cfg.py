@@ -183,32 +183,43 @@ augmentation_args = [
     },
 ]
 
+f_maps = [24, 48, 96, 2*96]  # deepetip default
+f_maps = [int(f*4.5) for f in f_maps]  # scale up f_maps
 model_args = {
     "encoder_args": 
         {
-            "class": "model.encoder.SiameseNet3D",
+            "class": "model.encoder.ResidualUNet3DEncoder",
             "class_args": {
-                "output_channels": 32,
-                "dropout": 0.2,
-                "repeat_layers": 0,
-                "norm_name": "GroupNorm",
-                "norm_kwargs": {"num_groups": 64, "num_channels": 1024},
-                "gem_pooling_p": 0,
+                "f_maps": f_maps,   # default
+                "in_channels": 1, 
+                "norm": "in",  # default in options
+                "act": "relu",  # default in options
+                "use_IP": True,  # Image Pyramid; default in train_bash
+                "use_coord": True,  # Coordinate Convolution; default in train_bash
+                "use_lw": False,  # LightWeight; default in train_bash
+                "lw_kernel": 3,  # default in train_bash
             },
         },
     "decoder_args": 
         {
-            "class": "model.promptable_decoder.SiameseNet3DDecoder",
+            "class": "model.promptable_decoder.ResidualUNet3DDecoder",
             "class_args": {
-                "out_size": 64,
+                "f_maps": f_maps,   # default
+                "out_channels": 1, 
+                "norm": "in",  # default in options
+                "act": "relu",  # default in options
+                "use_coord": True,  # Coordinate Convolution; default in train_bash
+                "use_softmax": False,  # my defaults for single class
+                "use_sigmoid": True,  # my defaults for single class
+                "use_lw": False,  # LightWeight; default in train_bash
+                "lw_kernel": 3,  # default in train_bash
+                "promptable": True, 
                 "prompt_dim": 32,
                 "film_activation": None,
-                "final_activation": nn.Sigmoid(),
-                "out_chans": 1,
             },
         },
-    "freeze_encoder": False
 }
+
 train_loss_args = val_loss_args = {
     "class": "torch.nn.BCELoss",
     "class_args": {
