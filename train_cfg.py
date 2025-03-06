@@ -137,7 +137,7 @@ dataset_configs = {
 }
 datamodule_args = {
     "dataset_configs": dataset_configs,
-    "output_base_dir": f"./training_data",
+    "output_base_dir": f"./datasets/propicker_training_subtomos",  # directory where the datamodule will save the subtomos for training, WARNING: this requires a lot of disk space
     "limit_to_classes": None,
     "max_classes_per_tomo": 8,
     
