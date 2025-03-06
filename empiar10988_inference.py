@@ -18,7 +18,7 @@ ckpt_file = "./fine_tuning_empiar10988/crop_delta=64/runs/train/train_ProPicker_
 # modify this to point to the train config file you used for training
 train_cfg_file = "./fine_tuning_empiar10988/crop_delta=64/configs/train.py"
 
-gpu = 2
+gpu = 0
 batch_size = 16
 
 # data will be temporarily saved in this directory; it will be removed after testing

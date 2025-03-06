@@ -26,7 +26,7 @@ crop_delta_num_epochs_dict = {
 # if true, use the binary labels contained in the empiar10988 dataset; we used those for the experiments in the paper
 use_binary_labels = True
 # gpu for training
-gpu_id = 2
+gpu_id = 0
 # output directory
 out_dir = f"./fine_tuning_empiar10988/crop_delta={crop_delta}"
 
