@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Minimal helper to run locmap_to_picks_gui.py inside a virtual X server (Xvfb) and expose it via VNC.
+# Minimal helper to run pick_from_locmap_gui.py inside a virtual X server (Xvfb) and expose it via VNC.
 # Prereqs (install yourself): apt-get install -y xvfb x11vnc
 # Usage:
 #   ./scripts/run_locmap_to_picks_vnc.sh --locmap pred_locmaps/sample_pred_locmaps.pt --prompt prompt_1 --output picks.tsv [--tomo path/to/volume.mrc]
@@ -41,5 +41,5 @@ start_vnc() {
 start_xvfb
 start_vnc
 
-echo "Launching locmap_to_picks_gui.py on ${DISPLAY_ID} (VNC port ${VNC_PORT}) with QT_QPA_PLATFORM=${QPA_PLATFORM}..."
-QT_API=pyside6 QT_QPA_PLATFORM="${QPA_PLATFORM}" QT_OPENGL=software DISPLAY="${DISPLAY_ID}" python locmap_to_picks_gui.py "$@"
+echo "Launching pick_from_locmap_gui.py on ${DISPLAY_ID} (VNC port ${VNC_PORT}) with QT_QPA_PLATFORM=${QPA_PLATFORM}..."
+QT_API=pyside6 QT_QPA_PLATFORM="${QPA_PLATFORM}" QT_OPENGL=software DISPLAY="${DISPLAY_ID}" python pick_from_locmap_gui.py "$@"

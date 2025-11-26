@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Minimal helper to run prompt_picker_gui.py inside a virtual X server (Xvfb) and expose it via VNC.
+# Minimal helper to run prompt_selector_gui.py inside a virtual X server (Xvfb) and expose it via VNC.
 # Prereqs (install yourself): apt-get install -y xvfb x11vnc
 # Usage:
 #   ./scripts/run_prompt_picker_vnc.sh --tomo /path/to/volume.mrc --output picks.tsv
@@ -40,5 +40,5 @@ start_vnc() {
 start_xvfb
 start_vnc
 
-echo "Launching prompt_picker_gui.py on ${DISPLAY_ID} (VNC port ${VNC_PORT}) with QT_QPA_PLATFORM=${QPA_PLATFORM}..."
-QT_API=pyside6 QT_QPA_PLATFORM="${QPA_PLATFORM}" QT_OPENGL=software DISPLAY="${DISPLAY_ID}" python prompt_picker_gui.py "$@"
+echo "Launching prompt_selector_gui.py on ${DISPLAY_ID} (VNC port ${VNC_PORT}) with QT_QPA_PLATFORM=${QPA_PLATFORM}..."
+QT_API=pyside6 QT_QPA_PLATFORM="${QPA_PLATFORM}" QT_OPENGL=software DISPLAY="${DISPLAY_ID}" python prompt_selector_gui.py "$@"

@@ -15,10 +15,13 @@ Controls:
 from __future__ import annotations
 
 import argparse
+import atexit
 import os
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 from typing import Iterable, Tuple
-import sys
 
 # Prefer PySide6 and a headless-friendly Qt platform by default.
 os.environ.setdefault("QT_API", "pyside6")
@@ -149,6 +152,37 @@ def build_panel(on_save, invert_checkbox: QCheckBox, smooth_spin: QDoubleSpinBox
     return panel
 
 
+def start_vnc(display: str, port: int, password: str) -> None:
+    """Launch Xvfb and x11vnc for headless viewing."""
+    if shutil.which("Xvfb") is None or shutil.which("x11vnc") is None:
+        raise SystemExit("xvfb and x11vnc are required for --vnc. Install them and retry.")
+    if not password:
+        raise SystemExit("--vnc-password is required when using --vnc (for safety).")
+
+    xvfb_cmd = ["Xvfb", display, "-screen", "0", "1920x1080x24"]
+    vnc_cmd = [
+        "x11vnc",
+        "-display",
+        display,
+        "-localhost",
+        "-shared",
+        "-forever",
+        "-rfbport",
+        str(port),
+        "-passwd",
+        password,
+    ]
+    xvfb_proc = subprocess.Popen(xvfb_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    vnc_proc = subprocess.Popen(vnc_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    def _cleanup():
+        for proc in (vnc_proc, xvfb_proc):
+            if proc.poll() is None:
+                proc.terminate()
+
+    atexit.register(_cleanup)
+
+
 def main(argv: Iterable[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Napari GUI for prompt-based picking.")
     parser.add_argument("--tomo", required=True, type=Path, help="Path to input tomogram (e.g., .mrc).")
@@ -171,7 +205,17 @@ def main(argv: Iterable[str] | None = None) -> None:
         action="store_true",
         help="Invert display contrast so particles appear bright on dark background.",
     )
+    parser.add_argument("--vnc", action="store_true", help="Run with an embedded Xvfb + x11vnc for remote viewing.")
+    parser.add_argument("--vnc-port", type=int, default=5901, help="VNC port (default: 5901).")
+    parser.add_argument("--vnc-display", type=str, default=":1", help="X display to use for VNC (default: :1).")
+    parser.add_argument("--vnc-password", type=str, default=None, help="Password for VNC (required if --vnc).")
     args = parser.parse_args(argv)
+
+    if args.vnc:
+        start_vnc(args.vnc_display, args.vnc_port, password=args.vnc_password)
+        os.environ["DISPLAY"] = args.vnc_display
+        os.environ["QT_QPA_PLATFORM"] = "xcb"
+        print(f"VNC running on localhost:{args.vnc_port} (DISPLAY {args.vnc_display}). Connect with your VNC client.")
 
     volume = load_tomogram(args.tomo)
     base_volume = volume.copy()

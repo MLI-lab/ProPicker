@@ -4,11 +4,11 @@ CLI to convert predicted locmaps into picks via clustering.
 
 Examples:
   # direct thresholds
-  python locmap_to_picks.py --pred-locmap pred_locmaps/sample_pred_locmaps.pt --prompt prompt_1 \
-    --binarization-threshold 0.5 --min-cluster-size-voxels 1000 --max-cluster-size-voxels 50000
+  python pick_from_locmap.py --pred-locmap pred_locmaps/sample_pred_locmaps.pt --prompt prompt_1 \
+    --thresholds 0.5 1000 50000
 
   # thresholds from JSON (keys: binarization_threshold, min_size_voxels, max_size_voxels)
-  python locmap_to_picks.py --pred-locmap pred_locmaps/sample_pred_locmaps.pt --prompt prompt_1 \
+  python pick_from_locmap.py --pred-locmap pred_locmaps/sample_pred_locmaps.pt --prompt prompt_1 \
     --thresholds-json thresholds.json
 """
 

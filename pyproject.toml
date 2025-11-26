@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=67", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "propicker"
+version = "0.1.0"
+description = "Prompt-based particle picking tools"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "torch",
+    "napari",
+    "qtpy",
+    "PySide6",
+    "mrcfile",
+    "scipy",
+    "pandas",
+    "scikit-image",
+]
+
+[project.scripts]
+propicker-prompt-selector = "prompt_selector_gui:main"
+propicker-predict-locmap = "propicker_predict_locmap:main"
+propicker-pick-from-locmap-gui = "pick_from_locmap_gui:main"
+propicker-pick-from-locmap = "pick_from_locmap:main"

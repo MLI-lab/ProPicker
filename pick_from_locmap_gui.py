@@ -9,7 +9,10 @@ Usage example:
 from __future__ import annotations
 
 import argparse
+import atexit
 import os
+import shutil
+import subprocess
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -31,6 +34,7 @@ from scipy.ndimage import gaussian_filter
 
 from clustering_and_picking import get_cluster_centroids_df
 from utils.mrctools import load_mrc_data
+from scipy.ndimage import gaussian_filter
 
 # Prefer PySide6 and software rendering by default (matches prompt_picker_gui).
 os.environ.setdefault("QT_API", "pyside6")
@@ -73,6 +77,36 @@ def particle_volume_from_diameter(diameter: float) -> float:
     radius = diameter / 2.0
     return 4.0 / 3.0 * np.pi * (radius ** 3)
 
+
+def start_vnc(display: str, port: int, password: str) -> None:
+    """Launch Xvfb and x11vnc for headless viewing."""
+    if shutil.which("Xvfb") is None or shutil.which("x11vnc") is None:
+        raise SystemExit("xvfb and x11vnc are required for --vnc. Install them and retry.")
+    if not password:
+        raise SystemExit("--vnc-password is required when using --vnc (for safety).")
+
+    xvfb_cmd = ["Xvfb", display, "-screen", "0", "1920x1080x24"]
+    vnc_cmd = [
+        "x11vnc",
+        "-display",
+        display,
+        "-localhost",
+        "-shared",
+        "-forever",
+        "-rfbport",
+        str(port),
+        "-passwd",
+        password,
+    ]
+    xvfb_proc = subprocess.Popen(xvfb_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    vnc_proc = subprocess.Popen(vnc_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    def _cleanup():
+        for proc in (vnc_proc, xvfb_proc):
+            if proc.poll() is None:
+                proc.terminate()
+
+    atexit.register(_cleanup)
 
 def build_panel(
     run_clustering,
@@ -150,7 +184,17 @@ def main(argv=None) -> None:
         default=Path("thresholds.json"),
         help="Where to save thresholds JSON (default: output with .json extension).",
     )
+    parser.add_argument("--vnc", action="store_true", help="Run with an embedded Xvfb + x11vnc for remote viewing.")
+    parser.add_argument("--vnc-port", type=int, default=5901, help="VNC port (default: 5901).")
+    parser.add_argument("--vnc-display", type=str, default=":1", help="X display to use for VNC (default: :1).")
+    parser.add_argument("--vnc-password", type=str, default=None, help="Password for VNC (required if --vnc).")
     args = parser.parse_args(argv)
+
+    if args.vnc:
+        start_vnc(args.vnc_display, args.vnc_port, password=args.vnc_password)
+        os.environ["DISPLAY"] = args.vnc_display
+        os.environ["QT_QPA_PLATFORM"] = "xcb"
+        print(f"VNC running on localhost:{args.vnc_port} (DISPLAY {args.vnc_display}). Connect with your VNC client.")
 
     locmap, locmap_name = load_locmap(args.locmap, prompt=args.prompt)
     locmap_data = locmap.copy()
