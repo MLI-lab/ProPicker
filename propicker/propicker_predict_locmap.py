@@ -14,10 +14,10 @@ from typing import Dict
 
 import torch
 
-from inference import get_pred_locmap_dict
-from model import ProPicker
-from paths import PROPICKER_MODEL_FILE, TOMOTWIN_MODEL_FILE
-from utils.mrctools import load_mrc_data
+from propicker.inference import get_pred_locmap_dict
+from propicker.model import ProPicker
+from propicker.paths import PROPICKER_MODEL_FILE, TOMOTWIN_MODEL_FILE
+from propicker.utils.mrctools import load_mrc_data
 
 DEFAULT_SUBTOMO_SIZE = 64
 DEFAULT_DATALOADER_WORKERS = 0

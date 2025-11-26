@@ -33,14 +33,7 @@ dependencies:
   - conda-package-handling=2.3.0=py311h06a4308_0
   - conda-package-streaming=0.10.0=py311h06a4308_0
   - cryptography=42.0.5=py311hdda0065_1
-  - cuda-cudart=12.1.105=0
-  - cuda-cupti=12.1.105=0
-  - cuda-libraries=12.1.0=0
-  - cuda-nvrtc=12.1.105=0
-  - cuda-nvtx=12.1.105=0
-  - cuda-opencl=12.5.39=0
-  - cuda-runtime=12.1.0=0
-  - cuda-version=12.5=3
+  - cuda-version=11.8
   - debugpy=1.6.7=py311h6a678d5_0
   - decorator=5.1.1=pyhd3eb1b0_0
   - distro=1.9.0=py311h06a4308_0
@@ -74,13 +67,7 @@ dependencies:
   - ld_impl_linux-64=2.40=h12ee557_0
   - lerc=3.0=h295c915_0
   - libarchive=3.7.4=hfca40fe_0
-  - libcublas=12.1.0.26=0
-  - libcufft=11.0.2.4=0
-  - libcufile=1.10.1.7=0
-  - libcurand=10.3.6.82=0
   - libcurl=8.7.1=h251f7ec_0
-  - libcusolver=11.4.4.55=0
-  - libcusparse=12.0.2.55=0
   - libdeflate=1.17=h5eee18b_1
   - libedit=3.1.20230828=h5eee18b_0
   - libev=4.33=h7f8727e_1
@@ -96,10 +83,7 @@ dependencies:
   - libmamba=1.5.8=had39da4_0
   - libmambapy=1.5.8=py311hf2555c7_0
   - libnghttp2=1.57.0=h2d74bed_0
-  - libnpp=12.0.2.50=0
   - libnsl=2.0.1=hd590300_0
-  - libnvjitlink=12.1.105=0
-  - libnvjpeg=12.1.1.14=0
   - libpng=1.6.39=h5eee18b_0
   - libsodium=1.0.18=h7b6447c_0
   - libsolv=0.7.24=he621ea3_1
@@ -166,8 +150,8 @@ dependencies:
   - python-dateutil=2.9.0post0=py311h06a4308_2
   - python-libarchive-c=2.9=pyhd3eb1b0_1
   - python_abi=3.11=5_cp311
-  - pytorch=2.4.0=py3.11_cuda12.1_cudnn9.1.0_0
-  - pytorch-cuda=12.1=ha16c6d3_5
+  - pytorch=2.4.0
+  - pytorch-cuda=11.8
   - pytorch-mutex=1.0=cuda
   - pytz=2024.1=py311h06a4308_0
   - pyyaml=6.0.1=py311h5eee18b_0
@@ -187,9 +171,9 @@ dependencies:
   - stack_data=0.2.0=pyhd3eb1b0_0
   - tbb=2021.8.0=hdb19cb5_0
   - tk=8.6.14=h39e8969_0
-  - torchaudio=2.4.0=py311_cu121
-  - torchtriton=3.0.0=py311
-  - torchvision=0.19.0=py311_cu121
+  - torchaudio=2.4.0
+  - torchtriton
+  - torchvision=0.19.0
   - tornado=6.4.1=py311h5eee18b_0
   - tqdm=4.66.4=py311h92b7b1e_0
   - traitlets=5.14.3=py311h06a4308_0

@@ -4,7 +4,7 @@ sys.path.append("..")
 sys.path.append("../..")
 
 from utils.mrctools import * 
-from data.utils import *
+from propicker.data.utils import *
 import torch
 from torch.utils.data import Dataset
 import glob

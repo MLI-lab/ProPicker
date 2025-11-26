@@ -1,5 +1,5 @@
 #%%
-from data.subtomos import extract_subtomos, _insert_subtomo, get_linear_ramp_weights
+from propicker.data.subtomos import extract_subtomos, _insert_subtomo, get_linear_ramp_weights
 import tqdm
 import torch
 from torch.utils.data import DataLoader

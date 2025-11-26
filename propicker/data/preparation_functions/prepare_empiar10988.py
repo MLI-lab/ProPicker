@@ -5,7 +5,7 @@ import glob
 import scipy
 import torch
 
-from data.utils import center_crop_tomo_to_shape, load_mrc_data
+from propicker.data.utils import center_crop_tomo_to_shape, load_mrc_data
 from .prepare_segmentation_subtomos import prepare_segmentation_subtomos
 
 #%%

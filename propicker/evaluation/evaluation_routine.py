@@ -10,7 +10,7 @@ import tqdm
 import json
 import torch
 from .tomotwin_evaluation_routine import SIZE_DICT, get_stats
-from clustering_and_picking.clustering import get_cluster_centroids_df
+from propicker.clustering_and_picking.clustering import get_cluster_centroids_df
 import multiprocessing
 from multiprocessing import Pool
 

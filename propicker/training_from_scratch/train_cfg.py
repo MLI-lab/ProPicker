@@ -1,6 +1,7 @@
 import pytorch_lightning as pl
 from torch import nn
-from paths import TOMOTWIN_TOMO_BASE_DIR, SHREC2021_BASE_DIR, TOMOTWIN_MODEL_FILE
+
+from propicker.paths import SHREC2021_BASE_DIR, TOMOTWIN_MODEL_FILE, TOMOTWIN_TOMO_BASE_DIR
 
 # these are passed to the preparation function of all datasets 
 shared_preparation_function_kwargs = {
@@ -15,7 +16,7 @@ shared_preparation_function_kwargs = {
 }
 dataset_configs = {
     "tomotwin": {
-        "preparation_function": "data.preparation_functions.prepare_tomotwin.prepare_tomotwin_run",
+        "preparation_function": "propicker.data.preparation_functions.prepare_tomotwin.prepare_tomotwin_run",
         "preparation_function_kwargs": {
             "dataset_base_dir": TOMOTWIN_TOMO_BASE_DIR,
             **shared_preparation_function_kwargs
@@ -115,7 +116,7 @@ dataset_configs = {
         ],
     },
     "shrec2021": {
-        "preparation_function": "data.preparation_functions.prepare_shrec2021.prepare_shrec2021_model",
+        "preparation_function": "propicker.data.preparation_functions.prepare_shrec2021.prepare_shrec2021_model",
         "preparation_function_kwargs": {
             "dataset_base_dir": SHREC2021_BASE_DIR,
             **shared_preparation_function_kwargs
@@ -153,28 +154,28 @@ datamodule_args = {
 }
 augmentation_args = [
     {
-        "class": "data.augmentation.Flip",
+        "class": "propicker.data.augmentation.Flip",
         "class_args": {
             "axis": (0, 1),
             "prob": 0.3,
         }
     },
     {
-        "class": "data.augmentation.Flip",
+        "class": "propicker.data.augmentation.Flip",
         "class_args": {
             "axis": (0, 2),
             "prob": 0.3,
         }
     },
     {
-        "class": "data.augmentation.Flip",
+        "class": "propicker.data.augmentation.Flip",
         "class_args": {
             "axis": (1, 2),
             "prob": 0.3,
         }
     },
     {
-        "class": "data.augmentation.RotateFull",
+        "class": "propicker.data.augmentation.RotateFull",
         "class_args": {
             "axes": (1, 2),
             "seed": int(1e8),
@@ -248,4 +249,3 @@ trainer_args = {
 logdir = "./lightning_logs"
 logger_name = "propicker_training"
 logger = pl.loggers.TensorBoardLogger(logdir, name=logger_name)
-

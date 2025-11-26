@@ -21,7 +21,7 @@ from typing import Dict, Iterable, List
 
 import torch
 
-from clustering_and_picking import get_cluster_centroids_df
+from propicker.clustering_and_picking import get_cluster_centroids_df
 
 
 def parse_args() -> argparse.Namespace:

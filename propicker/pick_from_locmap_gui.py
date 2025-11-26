@@ -32,8 +32,8 @@ from qtpy.QtWidgets import (
 )
 from scipy.ndimage import gaussian_filter
 
-from clustering_and_picking import get_cluster_centroids_df
-from utils.mrctools import load_mrc_data
+from propicker.clustering_and_picking import get_cluster_centroids_df
+from propicker.utils.mrctools import load_mrc_data
 from scipy.ndimage import gaussian_filter
 
 # Prefer PySide6 and software rendering by default (matches prompt_picker_gui).

@@ -22,7 +22,7 @@ dependencies = [
 
 [project.scripts]
 propicker-prompt-selector = "propicker.prompt_selector_gui:main"
-propicker-predict-locmap = "propicker.propiker_predict_locmap:main"
+propicker-predict-locmap = "propicker.propicker_predict_locmap:main"
 propicker-pick-from-locmap-gui = "propicker.pick_from_locmap_gui:main"
 propicker-pick-from-locmap = "propicker.pick_from_locmap:main"
 

@@ -1,17 +1,33 @@
 #%%
-import sys
-sys.path.append("..")
+import os
 
 import pytorch_lightning as pl
-from data.promptable_picking_datamodule import PromptablePickingDatamodule
-from data.augmentation import AugmentationPipeline
-import os
-import data
-from model import ProPicker
 from pytorch_lightning import seed_everything
-from train_cfg import datamodule_args, logger, train_loss_args, val_loss_args, model_args, optimizer_args, augmentation_args, trainer_args
+
+from propicker.data.promptable_picking_datamodule import PromptablePickingDatamodule
+from propicker.data.augmentation import AugmentationPipeline
+from propicker.model import ProPicker
+from propicker.training_from_scratch.train_cfg import (
+    augmentation_args,
+    datamodule_args,
+    logger,
+    model_args,
+    optimizer_args,
+    train_loss_args,
+    trainer_args,
+    val_loss_args,
+)
 # if you want to fine tune a model, comment out the line above and uncomment the line below
-# from finetune_cfg import datamodule_args, logger, train_loss_args, val_loss_args, model_args, optimizer_args, augmentation_args, trainer_args
+# from propicker.training_from_scratch.finetune_cfg import (
+#     datamodule_args,
+#     logger,
+#     train_loss_args,
+#     val_loss_args,
+#     model_args,
+#     optimizer_args,
+#     augmentation_args,
+#     trainer_args,
+# )
 
 # this may be not needed on some systems
 os.environ["NCCL_P2P_LEVEL"] = "PXB"
