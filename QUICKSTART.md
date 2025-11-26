@@ -26,9 +26,10 @@
 ## Workflow (4 stages)
 1) Prompt selection (GUI):
    ```bash
-   propicker-prompt-selector --tomo path/to/volume.mrc --output picks.tsv --subtomo-dir prompt_subtomos
+   propicker-prompt-selector --tomo path/to/volume.mrc --output picks.tsv --output-dir prompt_outputs
    ```
    - Pick points, save TSV and subtomos.
+   - Also writes `prompt_coordinates.txt` in `--output-dir` with prompt names (`prompt_1`, …) and coordinates.
    - Display options: invert contrast, display smoothing (σ).
 
 2) Predict locmaps:

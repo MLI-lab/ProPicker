@@ -3,7 +3,7 @@
 Simple Napari GUI to pick prompt locations in a tomogram and extract subtomos around them.
 
 Usage example:
-    python prompt_picker_gui.py --tomo path/to/volume.mrc --output picks.tsv --export-order xyz --subtomo-dir prompt_subtomos [--invert-contrast]
+    python prompt_selector_gui.py --tomo path/to/volume.mrc --output picks.tsv --export-order xyz --output-dir prompt_outputs [--invert-contrast]
 
 Controls:
   - Scroll mouse wheel / use Z slider to move through slices.
@@ -195,10 +195,10 @@ def main(argv: Iterable[str] | None = None) -> None:
     )
     parser.add_argument("--name", default=None, help="Optional layer name for the tomogram.")
     parser.add_argument(
-        "--subtomo-dir",
-        default=Path("prompt_subtomos"),
+        "--output-dir",
+        default=Path("prompt_outputs"),
         type=Path,
-        help="Directory to save extracted subtomos (will be created).",
+        help="Directory to save extracted subtomos and prompt metadata (will be created).",
     )
     parser.add_argument(
         "--invert-contrast",
@@ -310,12 +310,23 @@ def main(argv: Iterable[str] | None = None) -> None:
             return
 
         invert_factor = -1 if invert_checkbox.isChecked() else 1
+        output_dir = args.output_dir
+        output_dir.mkdir(parents=True, exist_ok=True)
+
         save_points(points_layer.data, args.output, args.export_order)
-        save_subtomos(points_layer.data, volume, args.subtomo_dir, size=37, invert_factor=invert_factor)
+        save_subtomos(points_layer.data, volume, output_dir, size=37, invert_factor=invert_factor)
+
+        coords_ordered = reorder_points(points_layer.data, args.export_order)
+        coord_path = output_dir / "prompt_coordinates.txt"
+        header = "prompt\t" + "\t".join(list(args.export_order.upper()))
+        with coord_path.open("w") as fh:
+            fh.write(header + "\n")
+            for idx, row in enumerate(coords_ordered, start=1):
+                fh.write(f"prompt_{idx}\t{row[0]:.3f}\t{row[1]:.3f}\t{row[2]:.3f}\n")
 
         msg = (
-            f"Saved {len(points_layer.data)} prompts to {args.output} "
-            f"and subtomos to {args.subtomo_dir} (order: {args.export_order.upper()}; "
+            f"Saved {len(points_layer.data)} prompts to {args.output}; "
+            f"subtomos and coordinates to {output_dir} (order: {args.export_order.upper()}; "
             f"invert={invert_checkbox.isChecked()})"
         )
         print(msg)
