@@ -25,3 +25,32 @@ propicker-prompt-selector = "prompt_selector_gui:main"
 propicker-predict-locmap = "propicker_predict_locmap:main"
 propicker-pick-from-locmap-gui = "pick_from_locmap_gui:main"
 propicker-pick-from-locmap = "pick_from_locmap:main"
+
+[tool.setuptools]
+py-modules = [
+    "prompt_selector_gui",
+    "propicker_predict_locmap",
+    "pick_from_locmap_gui",
+    "pick_from_locmap",
+]
+
+[tool.setuptools.packages.find]
+include = [
+    "clustering_and_picking",
+    "inference",
+    "evaluation",
+    "model",
+    "utils",
+]
+exclude = [
+    "data*",
+    "datasets*",
+    "result*",
+    "pred_locmaps*",
+    "prompt_subtomos*",
+    "DeepETPicker_*",
+    "lightning_logs*",
+    "model__*",
+    "model_bak*",
+    "scripts*",
+]
