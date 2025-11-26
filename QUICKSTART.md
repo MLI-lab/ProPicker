@@ -9,7 +9,7 @@
      libdbus-1-3 libx11-xcb1 libxrender1 libsm6 libice6 libxext6 \
      libxi6 libxcomposite1 libxcursor1 libxtst6 libxrandr2 libxdamage1 libxss1
    ```
-2. (Optional, for headless/VNC) install:
+2. (Optional, for remote/no-display use) install:
    ```bash
    sudo apt-get install -y xvfb x11vnc
    ```
@@ -44,9 +44,9 @@
    propicker-pick-from-locmap --pred-locmap pred_locmaps/tomo_pred_locmaps.pt --prompt prompt_1 --thresholds-json thresholds.json --output-dir pred_picks
    ```
 
-## VNC / Headless GUI
-Both GUIs accept `--vnc` to auto-start Xvfb+x11vnc (localhost only):
-- Common flags: `--vnc --vnc-port 5901 --vnc-display :1 --vnc-password <pw>`
+## VNC / Remote GUI
+Use this when running on a remote server or in a container without a desktop. Both GUIs accept `--vnc` to auto-start a virtual display and VNC server (localhost only):
+- Flags: `--vnc --vnc-port 5901 --vnc-display :1 --vnc-password <pw>` (password required for safety)
 - Prompt GUI example:
   ```bash
   propicker-prompt-selector --tomo ... --output picks.tsv --vnc --vnc-password abc
@@ -55,4 +55,4 @@ Both GUIs accept `--vnc` to auto-start Xvfb+x11vnc (localhost only):
   ```bash
   propicker-pick-from-locmap-gui --locmap ...pt --prompt prompt_1 --tomo ...mrc --output-picks-file picks.tsv --vnc --vnc-password abc
   ```
-- Requires `xvfb` and `x11vnc` installed. Connect with a VNC client to `localhost:<port>` (password required). Display is set to `:1` by default and uses the xcb backend.
+- Install `xvfb` and `x11vnc` first. Forward the VNC port (default 5901) and connect with a VNC client to `localhost:<port>` using the password you set.
