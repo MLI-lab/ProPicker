@@ -27,6 +27,7 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from scipy.ndimage import gaussian_filter
 
 from clustering_and_picking import get_cluster_centroids_df
 from utils.mrctools import load_mrc_data
@@ -83,6 +84,7 @@ def build_panel(
     min_checkbox: QCheckBox,
     max_checkbox: QCheckBox,
     diameter_spin: QDoubleSpinBox,
+    smooth_spin: QDoubleSpinBox,
     alpha_spin: QDoubleSpinBox,
     refresh_overlay,
     apply_filters,
@@ -106,6 +108,7 @@ def build_panel(
     form.addRow(max_checkbox)
     form.addRow("Max size × volume", max_mult_spin)
     form.addRow("Particle diameter (voxels)", diameter_spin)
+    form.addRow("Display smoothing (σ)", smooth_spin)
     form.addRow("Locmap alpha", alpha_spin)
 
     btn_run = QPushButton("Run clustering")
@@ -152,14 +155,16 @@ def main(argv=None) -> None:
     locmap, locmap_name = load_locmap(args.locmap, prompt=args.prompt)
     locmap_data = locmap.copy()
     binary_mask = np.zeros_like(locmap, dtype=bool)
+    locmap_display = locmap_data
 
     viewer = napari.Viewer(title=f"Locmap to picks - {locmap_name}")
     tomo_layer = None
+    tomo_vol = None
     if args.tomo is not None:
         tomo_vol = load_mrc_data(args.tomo).float().cpu().numpy()
         if tomo_vol.ndim != 3:
             raise ValueError(f"Tomo must be 3D, got shape {tomo_vol.shape}")
-        p01, p99 = np.percentile(tomo_vol, [.05, 99.5])
+        p01, p99 = np.percentile(tomo_vol, [1, 99])
         tomo_layer = viewer.add_image(
             tomo_vol,
             name=args.tomo.stem,
@@ -205,6 +210,10 @@ def main(argv=None) -> None:
     diameter_spin.setRange(1.0, 500.0)
     diameter_spin.setSingleStep(1.0)
     diameter_spin.setValue(25.0)
+    smooth_spin = QDoubleSpinBox()
+    smooth_spin.setRange(0.0, 10.0)
+    smooth_spin.setSingleStep(0.2)
+    smooth_spin.setValue(0.0)
     alpha_spin = QDoubleSpinBox()
     alpha_spin.setRange(0.0, 1.0)
     alpha_spin.setSingleStep(0.05)
@@ -215,6 +224,10 @@ def main(argv=None) -> None:
     max_checkbox.setChecked(True)
 
     state: Dict[str, np.ndarray] = {"all_df": None, "filtered_df": None}
+
+    def smooth_for_display(arr: np.ndarray) -> np.ndarray:
+        sigma = smooth_spin.value()
+        return gaussian_filter(arr, sigma) if sigma > 0 else arr
 
     def current_volume() -> float:
         try:
@@ -267,7 +280,7 @@ def main(argv=None) -> None:
     def refresh_overlay() -> None:
         """Update locmap overlay to reflect current binarization threshold."""
         thresh = bin_thresh_spin.value()
-        locmap_layer.data = (locmap_data > thresh).astype(np.float32)
+        locmap_layer.data = (smooth_for_display(locmap_data) > thresh).astype(np.float32)
         locmap_layer.contrast_limits = (0.0, 1.0)
         viewer.status = f"Overlay thresholded at {thresh:.3f}"
 
@@ -293,9 +306,16 @@ def main(argv=None) -> None:
         all_points.size = val
         filtered_points.size = val
 
+    def update_display_layers() -> None:
+        if tomo_layer is not None and tomo_vol is not None:
+            tomo_layer.data = smooth_for_display(tomo_vol)
+        refresh_overlay()
+
     alpha_spin.valueChanged.connect(lambda v: setattr(locmap_layer, "opacity", v))
     diameter_spin.valueChanged.connect(update_point_size)
+    smooth_spin.valueChanged.connect(lambda v: update_display_layers())
     update_point_size(diameter_spin.value())
+    update_display_layers()
     # Apply initial filter (no picks yet but keeps logic consistent)
     apply_filters()
 
@@ -308,6 +328,7 @@ def main(argv=None) -> None:
         min_checkbox=min_checkbox,
         max_checkbox=max_checkbox,
         diameter_spin=diameter_spin,
+        smooth_spin=smooth_spin,
         alpha_spin=alpha_spin,
         refresh_overlay=refresh_overlay,
         apply_filters=apply_filters,

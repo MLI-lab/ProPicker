@@ -17,7 +17,7 @@ from __future__ import annotations
 import argparse
 import os
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Tuple
 import sys
 
 # Prefer PySide6 and a headless-friendly Qt platform by default.
@@ -29,7 +29,8 @@ try:
     import mrcfile
     import napari
     import numpy as np
-    from qtpy.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget, QCheckBox
+    from scipy.ndimage import gaussian_filter
+    from qtpy.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget, QCheckBox, QDoubleSpinBox, QFormLayout
 except Exception as exc:  # noqa: BLE001 - show a clear hint for Qt binding issues
     hint = (
         "Failed to import GUI dependencies.\n"
@@ -64,6 +65,12 @@ def load_tomogram(path: Path) -> np.ndarray:
     if data.ndim != 3:
         raise ValueError(f"Expected a 3D volume, got shape {data.shape}")
     return data.astype(np.float32, copy=False)
+
+
+def percentile_contrast(arr: np.ndarray, low: float = 1.0, high: float = 99.0) -> Tuple[float, float]:
+    """Compute percentile-based contrast limits."""
+    p_low, p_high = np.percentile(arr, [low, high])
+    return float(p_low), float(p_high)
 
 
 def reorder_points(points: np.ndarray, order: str) -> np.ndarray:
@@ -118,7 +125,7 @@ def save_subtomos(points: np.ndarray, volume: np.ndarray, dest_dir: Path, size: 
             mrc.set_data(cube.astype(np.float32, copy=False))
 
 
-def build_panel(on_save, invert_checkbox: QCheckBox) -> QWidget:
+def build_panel(on_save, invert_checkbox: QCheckBox, smooth_spin: QDoubleSpinBox) -> QWidget:
     """Create a simple Qt side panel with instructions and a save button."""
     panel = QWidget()
     layout = QVBoxLayout()
@@ -129,7 +136,12 @@ def build_panel(on_save, invert_checkbox: QCheckBox) -> QWidget:
     )
     info.setWordWrap(True)
     layout.addWidget(info)
+
+    form = QFormLayout()
+    form.addRow("Display smoothing (σ)", smooth_spin)
+    layout.addLayout(form)
     layout.addWidget(invert_checkbox)
+
     save_btn = QPushButton("Extract selected prompts")
     save_btn.clicked.connect(on_save)
     layout.addWidget(save_btn)
@@ -162,12 +174,29 @@ def main(argv: Iterable[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     volume = load_tomogram(args.tomo)
+    base_volume = volume.copy()
+    contrast_limits = percentile_contrast(base_volume, 1, 99)
 
     viewer = napari.Viewer(title=f"Prompt picker - {args.tomo.name}")
-    image_layer = viewer.add_image(volume, name=args.name or args.tomo.name, colormap="gray", contrast_limits=None)
+    image_layer = viewer.add_image(
+        base_volume,
+        name=args.name or args.tomo.name,
+        colormap="gray",
+        contrast_limits=contrast_limits,
+    )
+    smooth_spin = QDoubleSpinBox()
+    smooth_spin.setRange(0.0, 10.0)
+    smooth_spin.setSingleStep(0.2)
+    smooth_spin.setValue(0.0)
 
     invert_checkbox = QCheckBox("Invert contrast (bright particles)")
     invert_checkbox.setChecked(args.invert_contrast)
+
+    def apply_smoothing(sigma: float) -> None:
+        """Update display image with Gaussian smoothing (display only)."""
+        img = gaussian_filter(base_volume, sigma) if sigma > 0 else base_volume
+        image_layer.data = img
+        image_layer.contrast_limits = contrast_limits
 
     def apply_invert(checked: bool) -> None:
         image_layer.colormap = "gray_r" if checked else "gray"
@@ -178,6 +207,8 @@ def main(argv: Iterable[str] | None = None) -> None:
         )
 
     invert_checkbox.toggled.connect(apply_invert)
+    smooth_spin.valueChanged.connect(lambda v: apply_smoothing(v))
+    apply_smoothing(smooth_spin.value())
     apply_invert(args.invert_contrast)
 
     points_layer = viewer.add_points(
@@ -247,7 +278,7 @@ def main(argv: Iterable[str] | None = None) -> None:
         viewer.status = msg
 
     viewer.bind_key("s")(on_save)
-    panel = build_panel(on_save, invert_checkbox)
+    panel = build_panel(on_save, invert_checkbox, smooth_spin)
     viewer.window.add_dock_widget(panel, area="right")
     
     viewer.window.resize(1900, 1100)  # tweak as desired
