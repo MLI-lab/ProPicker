@@ -1,7 +1,12 @@
 # ProPicker Quickstart
 
 ## Install
-1. Install system deps for Qt/napari (Ubuntu/Debian):
+1. Create/activate a conda env (recommended):
+   ```bash
+   conda create -n propicker python=3.11 -y
+   conda activate propicker
+   ```
+2. Install system deps for Qt/napari (Ubuntu/Debian). These provide the native libraries Qt needs for GUI rendering (GL, X11, fonts, etc.):
    ```bash
    sudo apt-get update && sudo apt-get install -y \
      libgl1 libegl1 libopengl0 libgl1-mesa-dri libgl1-mesa-glx \
@@ -9,11 +14,11 @@
      libdbus-1-3 libx11-xcb1 libxrender1 libsm6 libice6 libxext6 \
      libxi6 libxcomposite1 libxcursor1 libxtst6 libxrandr2 libxdamage1 libxss1
    ```
-2. (Optional, for remote/no-display use) install:
+3. (Optional, for remote/no-display use) install:
    ```bash
    sudo apt-get install -y xvfb x11vnc
    ```
-3. Install the package:
+4. Install the package:
    ```bash
    pip install .
    ```
