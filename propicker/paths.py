@@ -1,21 +1,23 @@
 import os
+from pathlib import Path
 
-# path to base directory of this repo
-# sub-parent directory of the current file
-PROPICKER_REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# path to the ProPicker model file downloaded from Google Drive
-PROPICKER_MODEL_FILE = f"{PROPICKER_REPO_DIR}/propicker.ckpt"
-# path to TomoTwin model file downloaded with .sh script
-TOMOTWIN_MODEL_FILE = f"{PROPICKER_REPO_DIR}/tomotwin.pth"
+def _env_or_default(env_var: str, default: str) -> str:
+    val = os.environ.get(env_var)
+    return val if val else default
 
-# path to the directory containing the datasets, modify this if you want to store the datasets elsewhere
-DATASETS_DIR = f"{PROPICKER_REPO_DIR}/datasets"
 
-# empiar10988 dataset, downloaded with .sh script
+# Base dir (not used for shipped weights anymore, but kept for dataset defaults)
+PROPICKER_REPO_DIR = Path(__file__).resolve().parent.parent
+
+# Model files: prefer environment overrides; otherwise expect files in CWD (or user-specified paths)
+PROPICKER_MODEL_FILE = _env_or_default("PROPICKER_MODEL_FILE", "propicker.ckpt")
+TOMOTWIN_MODEL_FILE = _env_or_default("TOMOTWIN_MODEL_FILE", "tomotwin.pth")
+
+# Dataset base dir (env override supported)
+DATASETS_DIR = _env_or_default("PROPICKER_DATASETS_DIR", "datasets")
+
+# Dataset paths (may need env overrides if moved)
 EMPIAR10988_BASE_DIR = f"{DATASETS_DIR}/empiar/10988/DEF"
-
-# training datasets, downloaded with .sh script
 TOMOTWIN_TOMO_BASE_DIR = f"{DATASETS_DIR}/tomotwin_data/tomograms"
 SHREC2021_BASE_DIR = f"{DATASETS_DIR}/shrec2021/full_dataset"
-
