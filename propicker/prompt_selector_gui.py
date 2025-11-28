@@ -3,7 +3,7 @@
 Simple Napari GUI to pick prompt locations in a tomogram and extract subtomos around them.
 
 Usage example:
-    python prompt_selector_gui.py --tomo path/to/volume.mrc --export-order xyz --output-dir prompt_outputs [--invert-contrast]
+    python prompt_selector_gui.py --tomo path/to/volume.mrc --output-dir prompt_outputs [--invert-contrast]
 
 Controls:
   - Scroll mouse wheel / use Z slider to move through slices.
@@ -49,14 +49,6 @@ except Exception as exc:  # noqa: BLE001 - show a clear hint for Qt binding issu
         )
     sys.stderr.write(hint)
     raise
-
-
-def axis_order(value: str) -> str:
-    """Validate an axis order string (permutation of zyx)."""
-    value = value.lower()
-    if sorted(value) != ["x", "y", "z"] or len(value) != 3:
-        raise argparse.ArgumentTypeError("Axis order must be a permutation of z, y, x (e.g., zyx or xyz).")
-    return value
 
 
 def load_tomogram(path: Path) -> np.ndarray:
@@ -186,12 +178,6 @@ def start_vnc(display: str, port: int, password: str) -> None:
 def main(argv: Iterable[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Napari GUI for prompt-based picking.")
     parser.add_argument("--tomo", required=True, type=Path, help="Path to input tomogram (e.g., .mrc).")
-    parser.add_argument(
-        "--export-order",
-        default="zyx",
-        type=axis_order,
-        help="Axis order for saved points. Napari stores points as Z,Y,X; use xyz if your downstream expects X,Y,Z.",
-    )
     parser.add_argument("--name", default=None, help="Optional layer name for the tomogram.")
     parser.add_argument(
         "--output-dir",
@@ -313,12 +299,12 @@ def main(argv: Iterable[str] | None = None) -> None:
         output_dir.mkdir(parents=True, exist_ok=True)
 
         picks_path = output_dir / "prompt_coords.tsv"
-        save_points(points_layer.data, picks_path, args.export_order)
+        save_points(points_layer.data, picks_path, "zyx")
         save_subtomos(points_layer.data, volume, output_dir, size=37, invert_factor=invert_factor)
 
-        coords_ordered = reorder_points(points_layer.data, args.export_order)
+        coords_ordered = reorder_points(points_layer.data, "zyx")
         coord_path = output_dir / "prompt_coordinates.txt"
-        header = "prompt\t" + "\t".join(list(args.export_order.upper()))
+        header = "prompt\tZ\tY\tX"
         with coord_path.open("w") as fh:
             fh.write(header + "\n")
             for idx, row in enumerate(coords_ordered, start=1):
