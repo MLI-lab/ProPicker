@@ -1,7 +1,7 @@
 # ProPicker
 
-## Update:
-On this branch, we are developing a CLI and GUI for ProPicker. Please refer to `GUI_QUICKSTART.md` for instructions on how to use it.
+## Update
+We now ship CLI/GUI entry points. See `GUI_QUICKSTART.md` for the end‑to‑end workflow.
 
 ## Installation and Setup
 We recommend using Conda to install the necessary dependencies. To do so, run the following commands:
@@ -16,22 +16,22 @@ To use ProPicker, you need the checkpoint of our pre-trained model, as well as t
 
 - You can download the TomoTwin checkpoint by running `bash download_tomotwin_ckpt.sh`
 
-After downloading, place the files in the `ProPicker` directory. If you want to store them somewhere else, you have to adjust the paths in `paths.py`.
+After downloading, place the files in the `ProPicker` directory. If you want to store them somewhere else, adjust the paths in `propicker/paths.py`.
 
 ## Prompt-Based Picking 
-We provide an example for prompt-based picking in the `TUTORIAL1` notebook, in which we pick ribosomes in the EMPIAR-10988 dataset. 
+We provide an example for prompt-based picking in the `TUTORIAL1:empiar10988_prompt_based_picking.ipynb` notebook, in which we pick ribosomes in the EMPIAR-10988 dataset. 
 
 
 ## Fine-Tuning ProPicker
-An example for fine-tuning ProPicker on the EMPIAR-10988 dataset is provided in the `TUTORIAL2` notebook.
+An example for fine-tuning ProPicker on the EMPIAR-10988 dataset is provided in the `TUTORIAL2:empiar10988_fine_tuning.ipynb` notebook.
 
 ## Training ProPicker from Scratch
 
-Training is handled in the `train.py` script. All necessary parameters are set in `train_cfg.py`.
+Training from scratch lives in `propicker/training_from_scratch/train.py`, with parameters in `propicker/training_from_scratch/train_cfg.py`.
 
-To download the training data, you can use the the `datasets/download_train_data.sh` script.
+To download the training data, you can use `datasets/download_train_data.sh`.
 
-**Note:** The training data is large, so you might want to download it to a different location. To do this, you can modify the `download_train_data.sh` script. In this case, you also have to adjust the path to the training data in `paths.py`
+**Note:** The training data is large, so you might want to download it to a different location. To do this, modify `datasets/download_train_data.sh`; also adjust the training data path in `propicker/paths.py`.
 
 
 ## Note
