@@ -122,6 +122,8 @@ def build_panel(
     alpha_spin: QDoubleSpinBox,
     refresh_overlay,
     apply_filters,
+    status_label: QLabel,
+    run_button: QPushButton,
 ) -> QWidget:
     panel = QWidget()
     layout = QVBoxLayout()
@@ -145,8 +147,7 @@ def build_panel(
     form.addRow("Display smoothing (σ)", smooth_spin)
     form.addRow("Locmap alpha", alpha_spin)
 
-    btn_run = QPushButton("Run clustering")
-    btn_run.clicked.connect(run_clustering)
+    btn_run = run_button
     bin_thresh_spin.valueChanged.connect(lambda v: refresh_overlay())
     min_mult_spin.valueChanged.connect(lambda v: apply_filters())
     max_mult_spin.valueChanged.connect(lambda v: apply_filters())
@@ -162,6 +163,7 @@ def build_panel(
     layout.addWidget(btn_run)
     layout.addWidget(btn_save)
     layout.addWidget(btn_save_thresh)
+    layout.addWidget(status_label)
     panel.setLayout(layout)
     return panel
 
@@ -177,13 +179,7 @@ def main(argv=None) -> None:
     parser.add_argument("--locmap", required=True, type=Path, help="Locmap file (.pt dict or .mrc).")
     parser.add_argument("--tomo", type=Path, default=None, help="Optional tomogram to show underneath the locmap.")
     parser.add_argument("--prompt", default=None, help="Prompt key to load from a .pt file (default: first key).")
-    parser.add_argument("--output-picks-file", type=Path, default=Path("picks.tsv"), help="Output TSV for filtered picks.")
-    parser.add_argument(
-        "--thresholds-json",
-        type=Path,
-        default=Path("thresholds.json"),
-        help="Where to save thresholds JSON (default: output with .json extension).",
-    )
+    parser.add_argument("--output-dir", type=Path, default=Path("picks"), help="Directory to save picks and thresholds. Created if needed.")
     parser.add_argument("--vnc", action="store_true", help="Run with an embedded Xvfb + x11vnc for remote viewing.")
     parser.add_argument("--vnc-port", type=int, default=5901, help="VNC port (default: 5901).")
     parser.add_argument("--vnc-display", type=str, default=":1", help="X display to use for VNC (default: :1).")
@@ -266,6 +262,7 @@ def main(argv=None) -> None:
     min_checkbox.setChecked(True)
     max_checkbox = QCheckBox("Apply max size threshold")
     max_checkbox.setChecked(True)
+    status_label = QLabel("")
 
     state: Dict[str, np.ndarray] = {"all_df": None, "filtered_df": None}
 
@@ -279,7 +276,15 @@ def main(argv=None) -> None:
         except Exception:
             return 0.0
 
+    run_button = QPushButton("Run clustering")
+    run_button.setEnabled(False)
+    initial_thresh = bin_thresh_spin.value()
+
     def run_clustering(event=None) -> None:
+        run_button.setEnabled(False)
+        thresh = bin_thresh_spin.value()
+        status_label.setText(f"Running clustering at threshold {thresh:.3f}... please wait.")
+        viewer.status = status_label.text()
         thresh = bin_thresh_spin.value()
         binary_mask[:] = locmap > thresh
         df = get_cluster_centroids_df(binary_mask, min_cluster_size=1, max_cluster_size=np.inf)
@@ -288,7 +293,9 @@ def main(argv=None) -> None:
         state["all_df"] = df
         state["filtered_df"] = None
         apply_filters()
-        viewer.status = f"Found {len(df)} clusters at threshold {thresh:.3f}"
+        status_label.setText(f"Clustering complete: {len(df)} clusters at threshold {thresh:.3f}")
+        viewer.status = status_label.text()
+        run_button.setEnabled(True)
 
     def threshold_clusters(event=None) -> None:
         if state["all_df"] is None:
@@ -317,8 +324,10 @@ def main(argv=None) -> None:
             viewer.status = "No picks to save."
             return
         coords = df[["Z", "Y", "X"]].to_numpy(dtype=float)
-        save_picks_tsv(coords, args.output_picks_file)
-        viewer.status = f"Saved {len(df)} picks to {args.output_picks_file}"
+        output_picks_file = args.output_dir / f"{locmap_name}_picks.tsv"
+        args.output_dir.mkdir(parents=True, exist_ok=True)
+        save_picks_tsv(coords, output_picks_file)
+        viewer.status = f"Saved {len(df)} picks to {output_picks_file}"
         print(viewer.status)
 
     def refresh_overlay() -> None:
@@ -338,8 +347,8 @@ def main(argv=None) -> None:
             "min_size_voxels": min_size,
             "max_size_voxels": max_size,
         }
-        out_path = args.thresholds_json
-        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path = args.output_dir / f"{locmap_name}_thresholds.json"
+        args.output_dir.mkdir(parents=True, exist_ok=True)
         import json
         with open(out_path, "w") as f:
             json.dump(data, f, indent=2)
@@ -358,6 +367,7 @@ def main(argv=None) -> None:
     alpha_spin.valueChanged.connect(lambda v: setattr(locmap_layer, "opacity", v))
     diameter_spin.valueChanged.connect(update_point_size)
     smooth_spin.valueChanged.connect(lambda v: update_display_layers())
+    bin_thresh_spin.valueChanged.connect(lambda _: run_button.setEnabled(bin_thresh_spin.value() != initial_thresh))
     update_point_size(diameter_spin.value())
     update_display_layers()
     # Apply initial filter (no picks yet but keeps logic consistent)
@@ -377,6 +387,8 @@ def main(argv=None) -> None:
         refresh_overlay=refresh_overlay,
         apply_filters=apply_filters,
         save_thresholds=save_thresholds,
+        status_label=status_label,
+        run_button=run_button,
     )
     viewer.window.add_dock_widget(panel, area="right")
     
