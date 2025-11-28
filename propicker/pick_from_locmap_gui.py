@@ -278,7 +278,6 @@ def main(argv=None) -> None:
 
     run_button = QPushButton("Run clustering")
     run_button.setEnabled(True)
-    run_button.clicked.connect(run_clustering)
 
     def run_clustering(event=None) -> None:
         run_button.setEnabled(False)
@@ -367,6 +366,7 @@ def main(argv=None) -> None:
     diameter_spin.valueChanged.connect(update_point_size)
     smooth_spin.valueChanged.connect(lambda v: update_display_layers())
     bin_thresh_spin.valueChanged.connect(lambda _: run_button.setEnabled(True))
+    run_button.clicked.connect(run_clustering)
     update_point_size(diameter_spin.value())
     update_display_layers()
     # Apply initial filter (no picks yet but keeps logic consistent)
