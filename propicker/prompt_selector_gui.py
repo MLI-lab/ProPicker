@@ -91,6 +91,8 @@ def extract_subtomo(volume: np.ndarray, center: np.ndarray, size: int = 37) -> n
         raise ValueError("Subtomo size must be odd to center on a voxel.")
     half = size // 2
     center = np.round(center).astype(int)
+    # Keep center inside volume bounds to avoid empty slices when a point is outside.
+    center = np.clip(center, 0, np.array(volume.shape) - 1)
     start = center - half
     stop = center + half + 1  # exclusive
 
