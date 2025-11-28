@@ -238,16 +238,7 @@ def main(argv: Iterable[str] | None = None) -> None:
     smooth_spin.valueChanged.connect(lambda v: apply_smoothing(v))
     apply_smoothing(smooth_spin.value())
     apply_invert(args.invert_contrast)
-
-    points_layer = viewer.add_points(
-        np.empty((0, 3)),
-        name="prompts",
-        size=6,
-        face_color="red",
-        ndim=3,
-    )
-    points_layer.mode = "add"
-
+    
     boxes_layer = viewer.add_shapes(
         [],
         name="prompt_boxes",
@@ -260,6 +251,15 @@ def main(argv: Iterable[str] | None = None) -> None:
     boxes_layer.editable = False
     boxes_layer.interactive = False
 
+    points_layer = viewer.add_points(
+        np.empty((0, 3)),
+        name="prompts",
+        size=6,
+        face_color="red",
+        ndim=3,
+    )
+    points_layer.mode = "add"
+    
     def update_boxes(event=None):
         """Draw a 37x37 square in the XY plane around each prompt (centered on voxel)."""
         half = (37 - 1) / 2  # half-width in pixels
@@ -277,14 +277,23 @@ def main(argv: Iterable[str] | None = None) -> None:
 
     update_boxes()
     points_layer.events.data.connect(update_boxes)
-    try:
-        qt_layers = getattr(viewer.window.qt_viewer, "layerList", None) or getattr(viewer.window.qt_viewer, "layers", None)
-        if qt_layers is not None:
-            idx = viewer.layers.index(boxes_layer)
-            qt_layers.setRowHidden(idx, True)
-    except Exception:
-        # If hiding fails on this napari version, ignore; boxes remain visible in the list.
-        pass
+
+    def hide_layer_in_list(layer) -> None:
+        """Hide a layer row in the Napari layer list while keeping it visible on canvas."""
+        try:
+            qt_viewer = getattr(viewer.window, "_qt_viewer", None) or getattr(viewer.window, "qt_viewer", None)
+            if qt_viewer is None:
+                return
+            layer_list = getattr(qt_viewer, "layerList", None) or getattr(qt_viewer, "layers", None)
+            if layer_list is None:
+                return
+            idx = viewer.layers.index(layer)
+            layer_list.setRowHidden(idx, True)
+        except Exception:
+            # Best-effort; if napari API changes, we just leave the layer visible in the list.
+            return
+
+    hide_layer_in_list(boxes_layer)
 
     def on_save(event=None):
         if points_layer.data.size == 0:
