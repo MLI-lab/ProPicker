@@ -103,6 +103,9 @@ def extract_subtomo(volume: np.ndarray, center: np.ndarray, size: int = 37) -> n
     for axis in range(3):
         src_start = max(start[axis], 0)
         src_stop = min(stop[axis], volume.shape[axis])
+        if src_stop <= src_start:
+            # Point outside bounds on this axis; return zeros.
+            return subtomo
         dst_start = src_start - start[axis]
         dst_stop = dst_start + (src_stop - src_start)
         src_slices.append(slice(src_start, src_stop))
