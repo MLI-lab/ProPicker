@@ -278,6 +278,7 @@ def main(argv=None) -> None:
 
     run_button = QPushButton("Run clustering")
     run_button.setEnabled(True)
+    run_button.clicked.connect(run_clustering)
 
     def run_clustering(event=None) -> None:
         run_button.setEnabled(False)
