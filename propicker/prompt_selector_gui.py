@@ -178,7 +178,6 @@ def start_vnc(display: str, port: int, password: str) -> None:
 def main(argv: Iterable[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Napari GUI for prompt-based picking.")
     parser.add_argument("--tomo", required=True, type=Path, help="Path to input tomogram (e.g., .mrc).")
-    parser.add_argument("--name", default=None, help="Optional layer name for the tomogram.")
     parser.add_argument(
         "--output-dir",
         default=Path("prompt_outputs"),
@@ -188,7 +187,7 @@ def main(argv: Iterable[str] | None = None) -> None:
     parser.add_argument(
         "--invert-contrast",
         action="store_true",
-        help="Invert display contrast so particles appear bright on dark background.",
+        help="IMPORTANT: ProPicker assumes particles are bright on dark background. If your tomogram has dark particles on bright background, use this flag to invert the contrast.",
     )
     parser.add_argument("--vnc", action="store_true", help="Run with an embedded Xvfb + x11vnc for remote viewing.")
     parser.add_argument("--vnc-port", type=int, default=5901, help="VNC port (default: 5901).")
@@ -209,7 +208,7 @@ def main(argv: Iterable[str] | None = None) -> None:
     viewer = napari.Viewer(title=f"Prompt picker - {args.tomo.name}")
     image_layer = viewer.add_image(
         base_volume,
-        name=args.name or args.tomo.name,
+        name=args.tomo.name,
         colormap="gray",
         contrast_limits=contrast_limits,
     )
