@@ -311,7 +311,7 @@ def main(argv: Iterable[str] | None = None) -> None:
 
         msg = (
             f"Saved {len(points_layer.data)} prompts to {picks_path}; "
-            f"subtomos and coordinates to {output_dir} (order: {args.export_order.upper()}; "
+            f"subtomos and coordinates to {output_dir}; "
             f"invert={invert_checkbox.isChecked()})"
         )
         print(msg)
