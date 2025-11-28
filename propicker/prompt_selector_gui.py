@@ -315,14 +315,6 @@ def main(argv: Iterable[str] | None = None) -> None:
         save_points(points_layer.data, picks_path, "zyx")
         save_subtomos(points_layer.data, volume, output_dir, size=37, invert_factor=invert_factor)
 
-        coords_ordered = reorder_points(points_layer.data, "zyx")
-        coord_path = output_dir / "prompt_coordinates.txt"
-        header = "prompt\tZ\tY\tX"
-        with coord_path.open("w") as fh:
-            fh.write(header + "\n")
-            for idx, row in enumerate(coords_ordered, start=1):
-                fh.write(f"prompt_{idx}\t{row[0]:.3f}\t{row[1]:.3f}\t{row[2]:.3f}\n")
-
         msg = (
             f"Saved {len(points_layer.data)} prompts to {picks_path}; "
             f"subtomos and coordinates to {output_dir}; "
