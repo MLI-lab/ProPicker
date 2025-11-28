@@ -3,7 +3,7 @@
 Simple Napari GUI to pick prompt locations in a tomogram and extract subtomos around them.
 
 Usage example:
-    python prompt_selector_gui.py --tomo path/to/volume.mrc --output picks.tsv --export-order xyz --output-dir prompt_outputs [--invert-contrast]
+    python prompt_selector_gui.py --tomo path/to/volume.mrc --export-order xyz --output-dir prompt_outputs [--invert-contrast]
 
 Controls:
   - Scroll mouse wheel / use Z slider to move through slices.
@@ -186,7 +186,6 @@ def start_vnc(display: str, port: int, password: str) -> None:
 def main(argv: Iterable[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Napari GUI for prompt-based picking.")
     parser.add_argument("--tomo", required=True, type=Path, help="Path to input tomogram (e.g., .mrc).")
-    parser.add_argument("--output", required=True, type=Path, help="Where to save picked points (TSV).")
     parser.add_argument(
         "--export-order",
         default="zyx",
@@ -313,7 +312,8 @@ def main(argv: Iterable[str] | None = None) -> None:
         output_dir = args.output_dir
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        save_points(points_layer.data, args.output, args.export_order)
+        picks_path = output_dir / "prompt_coords.tsv"
+        save_points(points_layer.data, picks_path, args.export_order)
         save_subtomos(points_layer.data, volume, output_dir, size=37, invert_factor=invert_factor)
 
         coords_ordered = reorder_points(points_layer.data, args.export_order)
@@ -325,7 +325,7 @@ def main(argv: Iterable[str] | None = None) -> None:
                 fh.write(f"prompt_{idx}\t{row[0]:.3f}\t{row[1]:.3f}\t{row[2]:.3f}\n")
 
         msg = (
-            f"Saved {len(points_layer.data)} prompts to {args.output}; "
+            f"Saved {len(points_layer.data)} prompts to {picks_path}; "
             f"subtomos and coordinates to {output_dir} (order: {args.export_order.upper()}; "
             f"invert={invert_checkbox.isChecked()})"
         )
