@@ -59,14 +59,14 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--propicker-ckpt",
         type=Path,
-        default=Path(PROPICKER_MODEL_FILE),
-        help="Path to ProPicker checkpoint (.ckpt).",
+        default=None,
+        help="Path to ProPicker checkpoint (.ckpt). Defaults to env PROPICKER_MODEL_FILE.",
     )
     p.add_argument(
         "--tomotwin-ckpt",
         type=Path,
-        default=Path(TOMOTWIN_MODEL_FILE),
-        help="Path to TomoTwin weights (for computing prompt embeddings).",
+        default=None,
+        help="Path to TomoTwin weights (for computing prompt embeddings). Defaults to env TOMOTWIN_MODEL_FILE.",
     )
     p.add_argument("--device", default=None, help="Torch device (e.g., cuda, cuda:0, or cpu). Default: auto.")
     p.add_argument("--batch-size", type=int, default=16, help="Batch size for inference subtomos.")
@@ -86,7 +86,16 @@ def choose_device(device_arg: str | None) -> torch.device:
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def load_model(ckpt_path: Path, device: torch.device) -> ProPicker:
+def resolve_ckpt(path_arg: Path | None, env_default: str | None, name: str) -> str:
+    """Resolve checkpoint path from CLI arg or env default; error if missing."""
+    if path_arg is not None:
+        return str(path_arg.expanduser().resolve())
+    if env_default:
+        return str(Path(env_default).expanduser().resolve())
+    raise FileNotFoundError(f"{name} checkpoint not provided. Set --{name}-ckpt or {name.upper()}_MODEL_FILE.")
+
+
+def load_model(ckpt_path: Path | str, device: torch.device) -> ProPicker:
     """Load ProPicker from checkpoint to device."""
     model = ProPicker.load_from_checkpoint(str(ckpt_path), map_location=device)  # type: ignore[arg-type]
     model = model.to(device).eval()
@@ -135,8 +144,11 @@ def main() -> None:
     prompt_subtomos = load_prompt_subtomos(args.prompt_subtomos)
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"Loading ProPicker checkpoint: {args.propicker_ckpt}")
-    model = load_model(args.propicker_ckpt, device)
+    propicker_ckpt = resolve_ckpt(args.propicker_ckpt, PROPICKER_MODEL_FILE, "propicker")
+    tomotwin_ckpt = resolve_ckpt(args.tomotwin_ckpt, TOMOTWIN_MODEL_FILE, "tomotwin")
+
+    print(f"Loading ProPicker checkpoint: {propicker_ckpt}")
+    model = load_model(propicker_ckpt, device)
 
     with torch.no_grad():
         for tomo_path in args.tomo:
@@ -144,7 +156,7 @@ def main() -> None:
                 tomo_path=tomo_path,
                 model=model,
                 prompt_subtomos=prompt_subtomos,
-                tomotwin_ckpt=args.tomotwin_ckpt,
+                tomotwin_ckpt=Path(tomotwin_ckpt),
                 batch_size=args.batch_size,
                 subtomo_overlap=args.subtomo_overlap,
                 invert_contrast=args.invert_contrast,
