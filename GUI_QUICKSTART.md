@@ -31,10 +31,12 @@ The prompt-based picking workflow with ProPicker involves four main steps:
    ```
 
 Model/data paths (must be provided via env or flags):
-- Set env vars for convenience:
-  - `PROPICKER_MODEL_FILE=/path/to/propicker.ckpt`
-  - `TOMOTWIN_MODEL_FILE=/path/to/tomotwin.pth`
-  - `PROPICKER_DATASETS_DIR=/path/to/datasets`
+- Set env vars as part of setup:
+  ```bash
+  export PROPICKER_MODEL_FILE=/abs/path/to/propicker.ckpt
+  export TOMOTWIN_MODEL_FILE=/abs/path/to/tomotwin.pth
+  export PROPICKER_DATASETS_DIR=/abs/path/to/datasets
+  ```
 - Or pass model paths via CLI flags (e.g., `--propicker-ckpt`, `--tomotwin-ckpt`). Defaults are not bundled.
 
 ## Workflow (step-by-step commands)
