@@ -13,6 +13,7 @@ import atexit
 import os
 import shutil
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -20,6 +21,7 @@ import mrcfile
 import napari
 import numpy as np
 import torch
+from qtpy.QtCore import QTimer
 from qtpy.QtWidgets import (
     QCheckBox,
     QDoubleSpinBox,
@@ -263,6 +265,8 @@ def main(argv=None) -> None:
     max_checkbox = QCheckBox("Apply max size threshold")
     max_checkbox.setChecked(True)
     status_label = QLabel("")
+    executor = ThreadPoolExecutor(max_workers=1)
+    running = {"busy": False}
 
     state: Dict[str, np.ndarray] = {"all_df": None, "filtered_df": None}
 
@@ -276,18 +280,10 @@ def main(argv=None) -> None:
         except Exception:
             return 0.0
 
-    run_button = QPushButton("Run clustering")
+    run_button = QPushButton("Run clustering (takes a while...)")
     run_button.setEnabled(True)
 
-    def run_clustering(event=None) -> None:
-        run_button.setEnabled(False)
-        thresh = bin_thresh_spin.value()
-        status_msg = f"Running clustering at threshold {thresh:.3f}... please wait."
-        status_label.setText(status_msg)
-        viewer.status = status_msg
-        thresh = bin_thresh_spin.value()
-        binary_mask[:] = locmap > thresh
-        df = get_cluster_centroids_df(binary_mask, min_cluster_size=1, max_cluster_size=np.inf)
+    def _finish_clustering(thresh: float, df):
         coords = df[["Z", "Y", "X"]].to_numpy(dtype=float) if len(df) else np.empty((0, 3))
         all_points.data = coords
         state["all_df"] = df
@@ -295,6 +291,39 @@ def main(argv=None) -> None:
         apply_filters()
         status_label.setText(f"Clustering complete: {len(df)} clusters at threshold {thresh:.3f}")
         viewer.status = status_label.text()
+        running["busy"] = False
+        run_button.setEnabled(True)
+
+    def _run_clustering_worker(thresh: float):
+        binary_mask[:] = locmap > thresh
+        return get_cluster_centroids_df(binary_mask, min_cluster_size=1, max_cluster_size=np.inf)
+
+    def run_clustering(event=None) -> None:
+        if running["busy"]:
+            return
+        running["busy"] = True
+        run_button.setEnabled(False)
+        thresh = bin_thresh_spin.value()
+        status_msg = f"Running clustering at threshold {thresh:.3f}... please wait."
+        status_label.setText(status_msg)
+        viewer.status = status_msg
+
+        future = executor.submit(_run_clustering_worker, thresh)
+
+        def on_done(fut):
+            try:
+                df = fut.result()
+            except Exception as e:
+                def _err():
+                    status_label.setText(f"Clustering failed: {e}")
+                    viewer.status = status_label.text()
+                    running["busy"] = False
+                    run_button.setEnabled(True)
+                QTimer.singleShot(0, _err)
+                return
+            QTimer.singleShot(0, lambda: _finish_clustering(thresh, df))
+
+        future.add_done_callback(on_done)
 
     def threshold_clusters(event=None) -> None:
         if state["all_df"] is None:
