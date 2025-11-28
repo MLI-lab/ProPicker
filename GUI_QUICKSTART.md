@@ -30,12 +30,12 @@ The prompt-based picking workflow with ProPicker involves four main steps:
    pip install .
    ```
 
-Model/data paths:
-- Set env vars if your weights are not in the working directory:
+Model/data paths (must be provided via env or flags):
+- Set env vars for convenience:
   - `PROPICKER_MODEL_FILE=/path/to/propicker.ckpt`
   - `TOMOTWIN_MODEL_FILE=/path/to/tomotwin.pth`
   - `PROPICKER_DATASETS_DIR=/path/to/datasets`
-- Or pass model paths via CLI flags (e.g., `--propicker-ckpt`, `--tomotwin-ckpt`).
+- Or pass model paths via CLI flags (e.g., `--propicker-ckpt`, `--tomotwin-ckpt`). Defaults are not bundled.
 
 ## Workflow (step-by-step commands)
 1) Prompt selection (GUI):
