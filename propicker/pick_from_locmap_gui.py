@@ -277,8 +277,7 @@ def main(argv=None) -> None:
             return 0.0
 
     run_button = QPushButton("Run clustering")
-    run_button.setEnabled(False)
-    initial_thresh = bin_thresh_spin.value()
+    run_button.setEnabled(True)
 
     def run_clustering(event=None) -> None:
         run_button.setEnabled(False)
@@ -295,7 +294,6 @@ def main(argv=None) -> None:
         apply_filters()
         status_label.setText(f"Clustering complete: {len(df)} clusters at threshold {thresh:.3f}")
         viewer.status = status_label.text()
-        run_button.setEnabled(True)
 
     def threshold_clusters(event=None) -> None:
         if state["all_df"] is None:
@@ -367,7 +365,7 @@ def main(argv=None) -> None:
     alpha_spin.valueChanged.connect(lambda v: setattr(locmap_layer, "opacity", v))
     diameter_spin.valueChanged.connect(update_point_size)
     smooth_spin.valueChanged.connect(lambda v: update_display_layers())
-    bin_thresh_spin.valueChanged.connect(lambda _: run_button.setEnabled(bin_thresh_spin.value() != initial_thresh))
+    bin_thresh_spin.valueChanged.connect(lambda _: run_button.setEnabled(True))
     update_point_size(diameter_spin.value())
     update_display_layers()
     # Apply initial filter (no picks yet but keeps logic consistent)
