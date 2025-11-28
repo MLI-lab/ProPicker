@@ -1,5 +1,11 @@
 # ProPicker
 
+## UPDATE:
+
+We are currently working on an improved CLI and GUI for ProPicker on the `gui` branch. 
+
+For the prompt-based picking workflow, the CLI and GUI are already functional and partially documented, but the implementation is still evolving. Interested users are welcome to check out the `gui` branch.
+
 ## Installation and Setup
 We recommend using Conda to install the necessary dependencies. To do so, run the following commands:
 ```
