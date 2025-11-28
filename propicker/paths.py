@@ -1,7 +1,8 @@
 import os
 
 # path to base directory of this repo
-PROPICKER_REPO_DIR = os.path.dirname(os.path.abspath(__file__))
+# sub-parent directory of the current file
+PROPICKER_REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # path to the ProPicker model file downloaded from Google Drive
 PROPICKER_MODEL_FILE = f"{PROPICKER_REPO_DIR}/propicker.ckpt"
