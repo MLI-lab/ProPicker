@@ -25,10 +25,17 @@ The prompt-based picking workflow with ProPicker involves four main steps:
    ```bash
    sudo apt-get install -y xvfb x11vnc
    ```
-4. Install the package:
+4. Install the package (set env vars for model paths or pass CLI flags):
    ```bash
    pip install .
    ```
+
+Model/data paths:
+- Set env vars if your weights are not in the working directory:
+  - `PROPICKER_MODEL_FILE=/path/to/propicker.ckpt`
+  - `TOMOTWIN_MODEL_FILE=/path/to/tomotwin.pth`
+  - `PROPICKER_DATASETS_DIR=/path/to/datasets`
+- Or pass model paths via CLI flags (e.g., `--propicker-ckpt`, `--tomotwin-ckpt`).
 
 ## Workflow (step-by-step commands)
 1) Prompt selection (GUI):
