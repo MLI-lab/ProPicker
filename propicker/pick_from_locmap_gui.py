@@ -282,8 +282,9 @@ def main(argv=None) -> None:
     def run_clustering(event=None) -> None:
         run_button.setEnabled(False)
         thresh = bin_thresh_spin.value()
-        status_label.setText(f"Running clustering at threshold {thresh:.3f}... please wait.")
-        viewer.status = status_label.text()
+        status_msg = f"Running clustering at threshold {thresh:.3f}... please wait."
+        status_label.setText(status_msg)
+        viewer.status = status_msg
         thresh = bin_thresh_spin.value()
         binary_mask[:] = locmap > thresh
         df = get_cluster_centroids_df(binary_mask, min_cluster_size=1, max_cluster_size=np.inf)
