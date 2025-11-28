@@ -1,5 +1,8 @@
 # ProPicker
 
+## Update:
+On this branch, we are developing a CLI and GUI for ProPicker. Please refer to `GUI_QUICKSTART.md` for instructions on how to use it.
+
 ## Installation and Setup
 We recommend using Conda to install the necessary dependencies. To do so, run the following commands:
 ```
