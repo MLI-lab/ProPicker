@@ -13,7 +13,6 @@ import atexit
 import os
 import shutil
 import subprocess
-import threading
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -33,6 +32,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 from scipy.ndimage import gaussian_filter
+from napari.qt.threading import thread_worker
 
 from propicker.clustering_and_picking import get_cluster_centroids_df
 from propicker.utils.mrctools import load_mrc_data
@@ -281,42 +281,38 @@ def main(argv=None) -> None:
     run_button = QPushButton("Run clustering (takes a while...)")
     run_button.setEnabled(True)
 
+    @thread_worker
+    def clustering_worker(thresh: float):
+        mask = locmap > thresh
+        df = get_cluster_centroids_df(mask, min_cluster_size=1, max_cluster_size=np.inf)
+        return thresh, df
+
+    def on_cluster_result(result):
+        thresh, df = result
+        coords = df[["Z", "Y", "X"]].to_numpy(dtype=float) if len(df) else np.empty((0, 3))
+        all_points.data = coords
+        state["all_df"] = df
+        state["filtered_df"] = None
+        apply_filters()
+        status_label.setText(f"Clustering complete: {len(df)} clusters at threshold {thresh:.3f}")
+        viewer.status = status_label.text()
+        run_button.setEnabled(True)
+
+    def on_cluster_error(err):
+        status_label.setText(f"Clustering failed: {err}")
+        viewer.status = status_label.text()
+        run_button.setEnabled(True)
+
     def run_clustering(event=None) -> None:
-        if running["busy"]:
-            return
-        running["busy"] = True
         run_button.setEnabled(False)
         thresh = bin_thresh_spin.value()
         status_msg = f"Running clustering at threshold {thresh:.3f}... please wait."
         status_label.setText(status_msg)
         viewer.status = status_msg
-        def worker():
-            try:
-                binary_mask[:] = locmap > thresh
-                df = get_cluster_centroids_df(binary_mask, min_cluster_size=1, max_cluster_size=np.inf)
-            except Exception as e:
-                def _err():
-                    status_label.setText(f"Clustering failed: {e}")
-                    viewer.status = status_label.text()
-                    running["busy"] = False
-                    run_button.setEnabled(True)
-                QTimer.singleShot(0, _err)
-                return
-
-            def finish():
-                coords = df[["Z", "Y", "X"]].to_numpy(dtype=float) if len(df) else np.empty((0, 3))
-                all_points.data = coords
-                state["all_df"] = df
-                state["filtered_df"] = None
-                apply_filters()
-                status_label.setText(f"Clustering complete: {len(df)} clusters at threshold {thresh:.3f}")
-                viewer.status = status_label.text()
-                running["busy"] = False
-                run_button.setEnabled(True)
-
-            QTimer.singleShot(0, finish)
-
-        threading.Thread(target=worker, daemon=True).start()
+        worker = clustering_worker(thresh)
+        worker.returned.connect(on_cluster_result)
+        worker.errored.connect(on_cluster_error)
+        worker.start()
 
     def threshold_clusters(event=None) -> None:
         if state["all_df"] is None:
