@@ -1,21 +1,15 @@
 import os
 from pathlib import Path
 
-
-def _env_or_default(env_var: str, default: str) -> str:
-    val = os.environ.get(env_var)
-    return val if val else default
-
-
 # Base dir (not used for shipped weights anymore, but kept for dataset defaults)
 PROPICKER_REPO_DIR = Path(__file__).resolve().parent.parent
 
-# Model files: prefer environment overrides; otherwise expect files in CWD (or user-specified paths)
-PROPICKER_MODEL_FILE = _env_or_default("PROPICKER_MODEL_FILE", "propicker.ckpt")
-TOMOTWIN_MODEL_FILE = _env_or_default("TOMOTWIN_MODEL_FILE", "tomotwin.pth")
+# Model files: resolved via environment variables (no package defaults)
+PROPICKER_MODEL_FILE = os.environ.get("PROPICKER_MODEL_FILE")
+TOMOTWIN_MODEL_FILE = os.environ.get("TOMOTWIN_MODEL_FILE")
 
-# Dataset base dir (env override supported)
-DATASETS_DIR = _env_or_default("PROPICKER_DATASETS_DIR", "datasets")
+# Dataset base dir (env override supported; default to relative datasets/)
+DATASETS_DIR = os.environ.get("PROPICKER_DATASETS_DIR", "datasets")
 
 # Dataset paths (may need env overrides if moved)
 EMPIAR10988_BASE_DIR = f"{DATASETS_DIR}/empiar/10988/DEF"

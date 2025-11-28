@@ -60,13 +60,13 @@ def parse_args() -> argparse.Namespace:
         "--propicker-ckpt",
         type=Path,
         default=None,
-        help="Path to ProPicker checkpoint (.ckpt). Defaults to env PROPICKER_MODEL_FILE.",
+        help="Path to ProPicker checkpoint (.ckpt). If omitted, uses env PROPICKER_MODEL_FILE.",
     )
     p.add_argument(
         "--tomotwin-ckpt",
         type=Path,
         default=None,
-        help="Path to TomoTwin weights (for computing prompt embeddings). Defaults to env TOMOTWIN_MODEL_FILE.",
+        help="Path to TomoTwin weights (for computing prompt embeddings). If omitted, uses env TOMOTWIN_MODEL_FILE.",
     )
     p.add_argument("--device", default=None, help="Torch device (e.g., cuda, cuda:0, or cpu). Default: auto.")
     p.add_argument("--batch-size", type=int, default=16, help="Batch size for inference subtomos.")
@@ -86,13 +86,14 @@ def choose_device(device_arg: str | None) -> torch.device:
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def resolve_ckpt(path_arg: Path | None, env_default: str | None, name: str) -> str:
-    """Resolve checkpoint path from CLI arg or env default; error if missing."""
+def resolve_ckpt(path_arg: Path | None, env_var: str, name: str) -> str:
+    """Resolve checkpoint path from CLI arg or environment; error if missing."""
     if path_arg is not None:
         return str(path_arg.expanduser().resolve())
-    if env_default:
-        return str(Path(env_default).expanduser().resolve())
-    raise FileNotFoundError(f"{name} checkpoint not provided. Set --{name}-ckpt or {name.upper()}_MODEL_FILE.")
+    env_val = os.environ.get(env_var)
+    if env_val:
+        return str(Path(env_val).expanduser().resolve())
+    raise FileNotFoundError(f"{name} checkpoint not provided. Set --{name}-ckpt or {env_var}.")
 
 
 def load_model(ckpt_path: Path | str, device: torch.device) -> ProPicker:
@@ -144,8 +145,8 @@ def main() -> None:
     prompt_subtomos = load_prompt_subtomos(args.prompt_subtomos)
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    propicker_ckpt = resolve_ckpt(args.propicker_ckpt, PROPICKER_MODEL_FILE, "propicker")
-    tomotwin_ckpt = resolve_ckpt(args.tomotwin_ckpt, TOMOTWIN_MODEL_FILE, "tomotwin")
+    propicker_ckpt = resolve_ckpt(args.propicker_ckpt, "PROPICKER_MODEL_FILE", "propicker")
+    tomotwin_ckpt = resolve_ckpt(args.tomotwin_ckpt, "TOMOTWIN_MODEL_FILE", "tomotwin")
 
     print(f"Loading ProPicker checkpoint: {propicker_ckpt}")
     model = load_model(propicker_ckpt, device)
