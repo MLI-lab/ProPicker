@@ -5,7 +5,7 @@ import torch
 from matplotlib import pyplot as plt
 from torch import nn
 
-import model
+import propicker.model as model
 
 
 class PromptablePicker(nn.Module):
