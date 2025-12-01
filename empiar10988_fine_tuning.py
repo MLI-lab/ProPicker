@@ -1,11 +1,9 @@
-import sys
-sys.path.append("..")
 import os
 import shutil
-from utils.mrctools import load_mrc_data, save_mrc_data
+from propicker.utils.mrctools import load_mrc_data, save_mrc_data
 import glob
-from data.preparation_functions.prepare_empiar10988 import empiar10988_ts_to_slice_of_interest, get_empiar10988_coord_dict
-from paths import EMPIAR10988_BASE_DIR, PROPICKER_MODEL_FILE
+from propicker.data.preparation_functions.prepare_empiar10988 import empiar10988_ts_to_slice_of_interest, get_empiar10988_coord_dict
+from propicker.paths import EMPIAR10988_BASE_DIR, PROPICKER_MODEL_FILE
 
 # disable warnings for chained assignments in pandas
 import pandas as pd
