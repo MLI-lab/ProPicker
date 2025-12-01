@@ -42,10 +42,9 @@ Model/data paths (must be provided via env or flags):
 ## Workflow (step-by-step commands)
 1) Prompt selection (GUI):
    ```bash
-   propicker-prompt-selector --tomo path/to/volume.mrc --output picks.tsv --output-dir prompt_outputs
+   propicker-prompt-selector --tomo path/to/volume.mrc --output-dir prompt_outputs
    ```
-   - Pick points, save TSV and subtomos.
-   - Also writes `prompt_coordinates.txt` in `--output-dir` with prompt names (`prompt_1`, …) and coordinates.
+   - Pick points; saves `prompt_coords.tsv`, `prompt_coordinates.txt`, and prompt subtomos inside `--output-dir`.
    - Display options: invert contrast, display smoothing (σ).
 
 2) Predict locmaps:
@@ -56,10 +55,10 @@ Model/data paths (must be provided via env or flags):
 
 3) Threshold tuning (GUI):
    ```bash
-   propicker-pick-from-locmap-gui --locmap pred_locmaps/tomo_pred_locmaps.pt --prompt prompt_1 --tomo tomo1.mrc --output-picks-file picks.tsv
+   propicker-pick-from-locmap-gui --locmap pred_locmaps/tomo_pred_locmaps.pt --prompt prompt_1 --tomo tomo1.mrc --output-dir picks
    ```
    - Adjust binarization, size thresholds (min/max enable flags), particle diameter (point size), display smoothing, alpha.
-   - Save picks (TSV) and thresholds (JSON).
+   - Saves picks (`<locmap_name>_picks.tsv`) and thresholds (`<locmap_name>_thresholds.json`) in `--output-dir`.
 
 4) Batch pick from locmaps with saved thresholds:
    ```bash
@@ -71,10 +70,10 @@ Use this when running on a remote server or in a container without a desktop. Bo
 - Flags: `--vnc --vnc-port 5901 --vnc-display :1 --vnc-password <pw>` (password required for safety)
 - Prompt GUI example:
   ```bash
-  propicker-prompt-selector --tomo ... --output picks.tsv --vnc --vnc-password abc
+  propicker-prompt-selector --tomo ... --output-dir prompt_outputs --vnc --vnc-password abc
   ```
 - Locmap GUI example:
   ```bash
-  propicker-pick-from-locmap-gui --locmap ...pt --prompt prompt_1 --tomo ...mrc --output-picks-file picks.tsv --vnc --vnc-password abc
+  propicker-pick-from-locmap-gui --locmap ...pt --prompt prompt_1 --tomo ...mrc --output-dir picks --vnc --vnc-password abc
   ```
 - Install `xvfb` and `x11vnc` first. Forward the VNC port (default 5901) and connect with a VNC client to `localhost:<port>` using the password you set.
