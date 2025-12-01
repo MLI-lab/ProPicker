@@ -1,5 +1,5 @@
 from .prepare_segmentation_subtomos import prepare_segmentation_subtomos
-from data.utils import load_mrc_data
+from propicker.data.utils import load_mrc_data
 import pandas as pd
 
 

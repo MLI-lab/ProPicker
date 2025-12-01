@@ -1,15 +1,12 @@
 #%%
-import sys
-sys.path.append("..")
-
 import os
 import shutil
 import importlib.util
 import copy
 
-from utils.mrctools import load_mrc_data, save_mrc_data
-from data.preparation_functions.prepare_empiar10988 import empiar10988_ts_to_slice_of_interest, get_empiar10988_coord_dict
-from paths import EMPIAR10988_BASE_DIR, PROPICKER_MODEL_FILE
+from propicker.utils.mrctools import load_mrc_data, save_mrc_data
+from propicker.data.preparation_functions.prepare_empiar10988 import empiar10988_ts_to_slice_of_interest, get_empiar10988_coord_dict
+from propicker.paths import EMPIAR10988_BASE_DIR, PROPICKER_MODEL_FILE
 
 # TS for testing, you can add more TS if you want
 test_ts = ["TS_030"]

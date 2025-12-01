@@ -13,8 +13,8 @@ import math
 import scipy
 import torch
 
-from data.subtomos import extract_subtomos
-from data.utils import save_h5_tensor_dict, save_mrc_data, load_mrc_data
+from propicker.data.subtomos import extract_subtomos
+from propicker.data.utils import save_h5_tensor_dict, save_mrc_data, load_mrc_data
 
 
 def prepare_segmentation_subtomos(tomo, locmaps,  out_dir, subtomo_size=37, subtomo_extraction_strides=None, save_full_locmaps=False, class_coord_dict=None, tomotwin_model_file=None, setup_tomotwin_reference_embeddings=True, add_background_class_to_locmap=False, skip_existing=True, crop_tomo_fn=None, device="cuda:0"):

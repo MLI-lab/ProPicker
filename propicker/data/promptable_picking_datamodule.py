@@ -5,8 +5,6 @@ import torch
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader, Dataset
 
-import data
-
 from .promptable_picking_dataset import PromptablePickingDataset
 
 #%%
