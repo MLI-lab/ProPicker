@@ -8,12 +8,15 @@ The prompt-based picking workflow with ProPicker involves four main steps:
 4) Generate picks for all tomograms in batch with `propicker-pick-from-locmap` using the saved thresholds.
 
 ## Install
-1. Create/activate a conda env (recommended):
+1. Install ProPicker and dependencies as described in [README.md](README.md).
+2. Create/activate a conda env (recommended):
    ```bash
    conda create -n propicker python=3.11 -y
    conda activate propicker
    ```
-2. Install system deps for Qt/napari (Ubuntu/Debian) so GUIs render correctly:
+3. Install system deps for Qt/napari (Ubuntu/Debian) so GUIs render correctly.
+
+   **CAUTION:** The following modifies system packages. We recommend trying the GUI without running these commands first, and installing them if you encounter issues.
    ```bash
    sudo apt-get update && sudo apt-get install -y \
      libgl1 libegl1 libopengl0 libgl1-mesa-dri libgl1-mesa-glx \
@@ -21,23 +24,10 @@ The prompt-based picking workflow with ProPicker involves four main steps:
      libdbus-1-3 libx11-xcb1 libxrender1 libsm6 libice6 libxext6 \
      libxi6 libxcomposite1 libxcursor1 libxtst6 libxrandr2 libxdamage1 libxss1
    ```
-3. (Optional for headless/remote) install:
+4. (Optional for headless/remote) install:
    ```bash
    sudo apt-get install -y xvfb x11vnc
    ```
-4. Install the package (set env vars for model paths or pass CLI flags):
-   ```bash
-   pip install .
-   ```
-
-Model/data paths (must be provided via env or flags):
-- Set env vars as part of setup:
-  ```bash
-  export PROPICKER_MODEL_FILE=/abs/path/to/propicker.ckpt
-  export TOMOTWIN_MODEL_FILE=/abs/path/to/tomotwin.pth
-  export PROPICKER_DATASETS_DIR=/abs/path/to/datasets
-  ```
-- Or pass model paths via CLI flags (e.g., `--propicker-ckpt`, `--tomotwin-ckpt`). Defaults are not bundled.
 
 ## Workflow (step-by-step commands)
 1) Prompt selection (GUI):
