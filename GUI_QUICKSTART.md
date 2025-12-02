@@ -19,7 +19,7 @@ The prompt-based picking workflow with ProPicker involves four main steps:
      libdbus-1-3 libx11-xcb1 libxrender1 libsm6 libice6 libxext6 \
      libxi6 libxcomposite1 libxcursor1 libxtst6 libxrandr2 libxdamage1 libxss1
    ```
-3. (Optional for headless/remote) install:
+3. Install these if you want to use the GUI from a remote server via VNC:
    ```bash
    sudo apt-get install -y xvfb x11vnc
    ```
