@@ -166,6 +166,10 @@ dependencies:
   - ruamel.yaml=0.17.21=py311h5eee18b_0
   - setuptools=75.1.0=py311h06a4308_0
   - six=1.16.0=pyhd3eb1b0_1
+  - napari=0.4.18
+  - qtpy
+  - pyside6
+  - mrcfile
   - soupsieve=2.5=py311h06a4308_0
   - sqlite=3.45.3=h5eee18b_0
   - stack_data=0.2.0=pyhd3eb1b0_0
