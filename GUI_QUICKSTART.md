@@ -9,12 +9,7 @@ The prompt-based picking workflow with ProPicker involves four main steps:
 
 ## Install
 1. Install ProPicker and dependencies as described in [README.md](README.md).
-2. Create/activate a conda env (recommended):
-   ```bash
-   conda create -n propicker python=3.11 -y
-   conda activate propicker
-   ```
-3. Install system deps for Qt/napari (Ubuntu/Debian) so GUIs render correctly.
+2. Install system deps for Qt/napari (Ubuntu/Debian) so GUIs render correctly.
 
    **CAUTION:** The following modifies system packages. We recommend trying the GUI without running these commands first, and installing them if you encounter issues.
    ```bash
@@ -24,7 +19,7 @@ The prompt-based picking workflow with ProPicker involves four main steps:
      libdbus-1-3 libx11-xcb1 libxrender1 libsm6 libice6 libxext6 \
      libxi6 libxcomposite1 libxcursor1 libxtst6 libxrandr2 libxdamage1 libxss1
    ```
-4. (Optional for headless/remote) install:
+3. (Optional for headless/remote) install:
    ```bash
    sudo apt-get install -y xvfb x11vnc
    ```
