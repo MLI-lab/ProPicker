@@ -38,6 +38,7 @@ The prompt-based picking workflow with ProPicker involves four main steps:
    propicker-predict-locmap --tomo tomo1.mrc tomo2.mrc --prompt-subtomos prompt_subtomos --output-dir pred_locmaps
    ```
    - Generates `<tomo>_pred_locmaps.pt` with per-prompt locmaps.
+   - See `propicker-predict-locmap --help` for all options.
    - **IMPORTANT:** Use `--invert-contrast` if necessary to ensure bright particles on dark background (as in Step 1).
 
 3) Threshold tuning (GUI):
@@ -53,6 +54,7 @@ The prompt-based picking workflow with ProPicker involves four main steps:
    ```bash
    propicker-pick-from-locmap --pred-locmap pred_locmaps/tomo_pred_locmaps.pt --prompt prompt_1 --thresholds-json thresholds.json --output-dir pred_picks
    ```
+   - See `propicker-pick-from-locmap --help` for all options.
 
 ## VNC / Remote GUI
 Use this when running on a remote server or in a container without a desktop. Both GUIs accept `--vnc` to auto-start a virtual display and VNC server (localhost only):
