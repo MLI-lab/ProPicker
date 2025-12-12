@@ -27,12 +27,11 @@
     ```
 
 ## Usage
-There are two main workflows: prompt-based picking and fine-tuning:
+There are two main workflows: prompt-based picking and fine-tuning. We provide tutorials for both.
 
 ### Workflow 1: Prompt-Based Picking 
 
-Prompt-based picking can be done via both the Python package and the CLI/GUI.
-We provide tutorials for both:
+Prompt-based picking can be done via both the Python package and the GUI/CLI. There are separate tutorials for both:
 
 - **Python Package Tutorial:** See the `TUTORIAL1:empiar10988_prompt_based_picking.ipynb` notebook.
 
