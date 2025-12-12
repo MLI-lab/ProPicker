@@ -222,9 +222,9 @@ def main(argv=None) -> None:
     )
     base_kwargs = dict(
         face_color="transparent",
-        border_color="red",
-        border_width=0.75,
-        border_width_is_relative=False,
+        edge_color="red",
+        edge_width=0.75,
+        edge_width_is_relative=False,
         size=25.0,
         out_of_slice_display=True,
         opacity=1.0,
