@@ -1,7 +1,7 @@
 # ProPicker
 
 ## Update
-We implemented a CLI/GUI workflow for prompt-based picking with ProPicker. See [here](gui_tutorial/README.md) for details and a tutorial.
+We implemented a CLI/GUI workflow for prompt-based picking with ProPicker. See [here](gui_tutorial/README.md) for details.
 
 ## Installation and Setup
 1. Use Conda to install the necessary dependencies in a new environment. From the root of the repository, run:
@@ -29,12 +29,23 @@ We implemented a CLI/GUI workflow for prompt-based picking with ProPicker. See [
     export TOMOTWIN_MODEL_FILE=/abs/path/to/tomotwin.pth
     ```
 
-## Prompt-Based Picking 
-We provide an example for prompt-based picking in the `TUTORIAL1:empiar10988_prompt_based_picking.ipynb` notebook, in which we pick ribosomes in the EMPIAR-10988 dataset. 
+## Usage
+There are two main workflows: prompt-based picking and fine-tuning:
+
+### Workflow 1: Prompt-Based Picking 
+
+Prompt-based picking can be done via both the Python package and the CLI/GUI.
+We provide tutorials for both:
+
+- **Python Package Tutorial:** See the `TUTORIAL1:empiar10988_prompt_based_picking.ipynb` notebook.
+
+- **GUI/CLI Tutorial:** See the our [quickstart](gui_tutorial/README.md).
 
 
-## Fine-Tuning ProPicker
-An example for fine-tuning ProPicker on the EMPIAR-10988 dataset is provided in the `TUTORIAL2:empiar10988_fine_tuning.ipynb` notebook.
+### Workflow 2: Fine-Tuning ProPicker
+
+Fine-tuning currently only works via the Python package and additional scripts. See the `TUTORIAL2:empiar10988_fine_tuning.ipynb` notebook, which continues from the first tutorial.
+
 
 ## Training ProPicker from Scratch
 
