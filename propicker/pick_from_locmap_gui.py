@@ -230,7 +230,7 @@ def main(argv=None) -> None:
         opacity=1.0,
         ndim=3,
     )
-    all_points = viewer.add_points(np.empty((0, 3)), name="all_clusters", **base_kwargs, visible=False)
+    #all_points = viewer.add_points(np.empty((0, 3)), name="all_clusters", **base_kwargs, visible=False)
     filtered_points = viewer.add_points(np.empty((0, 3)), name="filtered_clusters", **base_kwargs)
 
     bin_thresh_spin = QDoubleSpinBox()
@@ -291,7 +291,7 @@ def main(argv=None) -> None:
     def on_cluster_result(result):
         thresh, df = result
         coords = df[["Z", "Y", "X"]].to_numpy(dtype=float) if len(df) else np.empty((0, 3))
-        all_points.data = coords
+        #all_points.data = coords
         state["all_df"] = df
         state["filtered_df"] = None
         apply_filters()
@@ -374,7 +374,7 @@ def main(argv=None) -> None:
         print(viewer.status)
 
     def update_point_size(val: float) -> None:
-        all_points.size = val
+        #all_points.size = val
         filtered_points.size = val
 
     def update_display_layers() -> None:
