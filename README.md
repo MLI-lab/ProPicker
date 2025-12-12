@@ -1,7 +1,7 @@
 # ProPicker
 
 ## Update
-We implemented a CLI/GUI workflow for prompt-based picking with ProPicker. See [GUI_QUICKSTART.md](GUI_QUICKSTART.md) for details.
+We implemented a CLI/GUI workflow for prompt-based picking with ProPicker. See [GUI_QUICKSTART.md](gui_tutorial/GUI_QUICKSTART.md) for details.
 
 ## Installation and Setup
 1. Use Conda to install the necessary dependencies in a new environment. From the root of the repository, run:

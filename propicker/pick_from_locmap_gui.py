@@ -232,6 +232,24 @@ def main(argv=None) -> None:
     )
     #all_points = viewer.add_points(np.empty((0, 3)), name="all_clusters", **base_kwargs, visible=False)
     filtered_points = viewer.add_points(np.empty((0, 3)), name="filtered_clusters", **base_kwargs)
+<<<<<<< ours
+
+    def style_filtered_points() -> None:
+        """Keep pick markers as solid red spheres even after data updates."""
+        coords = filtered_points.data
+        n = len(coords) if coords is not None else 0
+        red_rgba = np.array([[1.0, 0.0, 0.0, 0.9]], dtype=float)
+        colors = np.repeat(red_rgba, n, axis=0)
+        filtered_points.edge_color_mode = "direct"
+        filtered_points.face_color_mode = "transparent"
+        filtered_points.edge_color = colors
+        filtered_points.face_color = colors
+
+    style_filtered_points()
+=======
+    filtered_points.edge_color = "red"  # keep picks red even after data updates
+    filtered_points.face_color = "transparent"
+>>>>>>> theirs
 
     bin_thresh_spin = QDoubleSpinBox()
     bin_thresh_spin.setRange(0.0, 1.0)
