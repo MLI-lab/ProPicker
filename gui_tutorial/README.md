@@ -69,7 +69,7 @@ We provide a demo for prompt-based picking of ribosomes in an EMPIAR-10045 tomog
    ```
    The `--tomo` argument also accepts multiple tomogram files (separated by spaces).
 
-   **Important:** Use `--invert-contrast` if necessary to ensure particles appear bright (white) on dark background in the tomogram.
+   **Important:** As in Step 1, use the `--invert-contrast` if necessary to ensure particles appear bright (white) on dark background in the tomogram.
 
 3) **Threshold tuning (GUI):**
 
