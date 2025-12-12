@@ -1,8 +1,5 @@
 # ProPicker
 
-## Update
-We implemented a CLI/GUI workflow for prompt-based picking with ProPicker. See [here](gui_tutorial/README.md) for details.
-
 ## Installation and Setup
 1. Use Conda to install the necessary dependencies in a new environment. From the root of the repository, run:
     ```bash
@@ -39,7 +36,7 @@ We provide tutorials for both:
 
 - **Python Package Tutorial:** See the `TUTORIAL1:empiar10988_prompt_based_picking.ipynb` notebook.
 
-- **GUI/CLI Tutorial:** See the our [quickstart](gui_tutorial/README.md).
+- **GUI/CLI Tutorial:** See the our [gui_tutorial](gui_tutorial/README.md).
 
 
 ### Workflow 2: Fine-Tuning ProPicker
