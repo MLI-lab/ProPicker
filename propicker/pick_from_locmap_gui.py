@@ -228,6 +228,7 @@ def main(argv=None) -> None:
         size=25.0,
         out_of_slice_display=True,
         opacity=1.0,
+        ndim=3,
     )
     all_points = viewer.add_points(np.empty((0, 3)), name="all_clusters", **base_kwargs, visible=False)
     filtered_points = viewer.add_points(np.empty((0, 3)), name="filtered_clusters", **base_kwargs)
