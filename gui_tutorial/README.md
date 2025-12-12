@@ -1,4 +1,6 @@
-# ProPicker GUI Quickstart
+# ProPicker GUI and CLI Quickstart 
+
+Here, we provide a quickstart guide and tutorial for using the ProPicker GUI and CLI for prompt-based picking.
 
 ## Overview
 The prompt-based picking workflow with ProPicker involves four main steps:
@@ -25,22 +27,25 @@ The prompt-based picking workflow with ProPicker involves four main steps:
    ```
 
 ## Tutorial
-We provide a demo for prompt-based picking of ribosomes from an EMPIAR-10045 tomogram.
+We provide a demo for prompt-based picking of ribosomes in an EMPIAR-10045 tomogram.
 
-0) Download Data:
+0) **Download Data:**
+
    ```bash
    # you can change OUT_DIR to any directory you like
    OUT_DIR=.
    # download a demo tomogram from EMPIAR-10045 (see figshare entry for details)
    wget --content-disposition "https://ndownloader.figshare.com/files/47423593"
    TOMO_FILE=$OUT_DIR/tomo.mrc
-   mv "./fbp+wiener.mrc" $TOMO_FILE. # fbp+wiener is the file we just downloaded
+   # fbp+wiener is the file we just downloaded
+   mv "./fbp+wiener.mrc" $TOMO_FILE
    ```
 
-   This downloads a demo tomogram and prompt subtomograms into the current directory.
 
+1) **Pick prompts (GUI):**
 
-1) Select prompt (GUI):
+   Run the following command to launch the prompt selection GUI (you can omit the `--vnc` options if you are running on a local machine with display):
+
    ```bash
    # vnc settings for when running on remote server
    VNC_PASSWORD=propicker123
@@ -48,13 +53,12 @@ We provide a demo for prompt-based picking of ribosomes from an EMPIAR-10045 tom
 
    propicker-prompt-selector --tomo $TOMO_FILE --output-dir $OUT_DIR/prompts --vnc --vnc-port $VNC_PORT --vnc-password $VNC_PASSWORD 
    ```
-   You can omit the `--vnc` options if you are running on a local machine with display.
    The GUI looks like this:
    ![Prompt Selector GUI](gui1.png)
 
-2) Use prompted ProPicker to predict locmaps (CLI):
+2) **Segment tomograms into locmaps (CLI):**
 
-   Use the selected prompts to predict locmaps for the tomogram. You can also use multiple tomograms here, see the output of `propicker-predict-locmap --help` for details.
+   Use the selected prompts to predict locmaps for the tomogram. Run the following command:
 
    ```bash
    PROPIKCER_CKPT=/PATH/TO/propicker.ckpt
@@ -63,9 +67,12 @@ We provide a demo for prompt-based picking of ribosomes from an EMPIAR-10045 tom
    propicker-predict-locmap --tomo $TOMO_FILE --invert-contrast --prompt-subtomos $OUT_DIR/prompts --output-dir $OUT_DIR/pred_locmaps --subtomo-overlap 16 --device cuda:2 --propicker-ckpt $PROPIKCER_CKPT --tomotwin-ckpt $TOMOTWIN_CKPT
 
    ```
+   The `--tomo` argument also accepts multiple tomogram files (separated by spaces).
+
    **Important:** Use `--invert-contrast` if necessary to ensure particles appear bright (white) on dark background in the tomogram.
 
-3) Threshold tuning (GUI):
+3) **Threshold tuning (GUI):**
+
    Tune the thresholds on one of the locmaps predicted in Step 2. In this tutorial, we have only one tomogram, so we use that one.
 
    ```bash
@@ -79,9 +86,14 @@ We provide a demo for prompt-based picking of ribosomes from an EMPIAR-10045 tom
 
    **Note:** The prompt cannot be changed in the GUI, it must be specified via `--prompt`.
 
-4) Optional: Batch picking from locmaps (CLI):
+4) **Batch picking from locmaps (CLI):**
+
+   **Note:** As we have only one tomogram in this tutorial, this step is not needed, if you correctly saved the picks in Step 3.
+
+   You can apply cluster-based picking to all predicted locmaps from Step 2 using the thresholds `.json` saved in Step 3, or with custom thresholds (see `propicker-pick-from-locmap --help`).
+
    ```bash
    propicker-pick-from-locmap --pred-locmap ... --prompt prompt_1 --thresholds-json $OUT_DIR/picks/thresholds.json --output-dir picks
    ```
-   You can apply cluster-based picking to all predicted locmaps from Step 2 using the thresholds saved from Step 3 or with custom thresholds. See `propicker-pick-from-locmap --help` for details.
 
+   The `--pred-locmap` also accepts multiple locmap files (separated by spaces).
