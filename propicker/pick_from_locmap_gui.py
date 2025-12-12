@@ -269,6 +269,24 @@ def main(argv=None) -> None:
 
     state: Dict[str, np.ndarray] = {"all_df": None, "filtered_df": None}
 
+    def update_status_counts(total: int | None = None, filtered: int | None = None) -> None:
+        """Show total cluster counts before/after filtering in the status label."""
+        if total is None:
+            total = len(state["all_df"]) if state["all_df"] is not None else 0
+        if filtered is None:
+            if state["filtered_df"] is not None:
+                filtered = len(state["filtered_df"])
+            elif state["all_df"] is not None:
+                filtered = len(state["all_df"])
+            else:
+                filtered = 0
+        status_label.setText(
+            f"Number of picks: {total}\n"
+            f"Number of picks after applying size filters: {filtered}"
+        )
+
+    update_status_counts()
+
     def smooth_for_display(arr: np.ndarray) -> np.ndarray:
         sigma = smooth_spin.value()
         return gaussian_filter(arr, sigma) if sigma > 0 else arr
@@ -295,20 +313,17 @@ def main(argv=None) -> None:
         state["all_df"] = df
         state["filtered_df"] = None
         apply_filters()
-        status_label.setText(f"Clustering complete: {len(df)} clusters at threshold {thresh:.3f}")
-        viewer.status = status_label.text()
+        viewer.status = f"Clustering complete: {len(df)} clusters at threshold {thresh:.3f}"
         run_button.setEnabled(True)
 
     def on_cluster_error(err):
-        status_label.setText(f"Clustering failed: {err}")
-        viewer.status = status_label.text()
+        viewer.status = f"Clustering failed: {err}"
         run_button.setEnabled(True)
 
     def run_clustering(event=None) -> None:
         run_button.setEnabled(False)
         thresh = bin_thresh_spin.value()
         status_msg = f"Running clustering at threshold {thresh:.3f}... please wait."
-        status_label.setText(status_msg)
         viewer.status = status_msg
         worker = clustering_worker(thresh)
         worker.returned.connect(on_cluster_result)
@@ -318,6 +333,7 @@ def main(argv=None) -> None:
     def threshold_clusters(event=None) -> None:
         if state["all_df"] is None:
             viewer.status = "Run clustering first."
+            update_status_counts(0, 0)
             return
         vol = current_volume()
         if vol <= 0:
@@ -333,6 +349,7 @@ def main(argv=None) -> None:
         coords = df_filt[["Z", "Y", "X"]].to_numpy(dtype=float) if len(df_filt) else np.empty((0, 3))
         filtered_points.data = coords
         state["filtered_df"] = df_filt
+        update_status_counts(len(df), len(df_filt))
         viewer.status = f"Filtered to {len(df_filt)} clusters (size {min_size:.1f}-{max_size:.1f} voxels)"
     apply_filters = threshold_clusters  # alias for clarity
 
