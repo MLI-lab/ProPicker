@@ -14,7 +14,7 @@
 
 3. You need the checkpoint of our pre-trained model, as well as the checkpoint of the TomoTwin model we used as prompt encoder.
 
-    - You can download the ProPicker checkpoint here [here](https://drive.google.com/file/d/1lFDIJdAc99QVfGDuhOu89vEXYlz-oHQh/view?usp=share_link)
+    - You can download the ProPicker checkpoint here [here](https://drive.google.com/file/d/1mgzA576roiAA7WVPmkwsDXWiREQBkJvB/view?usp=sharing)
 
     - You can download the TomoTwin checkpoint by running `bash download_tomotwin_ckpt.sh`
 
