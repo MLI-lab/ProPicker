@@ -12,13 +12,13 @@ from propicker.paths import PROPICKER_MODEL_FILE, DEEPETPICKER_PROPICKER_DIR
 EMPIAR10988_BASE_DIR = "../empiar/10988/DEF"
 
 # TS for testing, you can add more TS if you want
-test_ts = ["TS_030"]
+test_ts = ["TS_026", "TS_027", "TS_028", "TS_030", "TS_034", "TS_037", "TS_041", "TS_043", "TS_045"]
 # modify this to point to the checkpoint file you want to test
-ckpt_file = "./fine_tuning_empiar10988/crop_delta=64/runs/train/train_ProPicker_BlockSize72_CELoss_MaxEpoch100_bs8_lr0.001_IP1_bg1_coord1_Softmax0_bn__TNNone/version_0/checkpoints/epoch=28-step=260.ckpt"
+ckpt_file = "./fine_tuning_empiar10988/crop_delta=64/runs/train/train_ProPicker_BlockSize72_CELoss_MaxEpoch75_bs8_lr0.001_IP1_bg1_coord1_Softmax0_bn__TNNone/version_0/checkpoints/epoch=28-step=260.ckpt"
 # modify this to point to the train config file you used for training
 train_cfg_file = "./fine_tuning_empiar10988/crop_delta=64/configs/train.py"
 
-gpu = 0
+gpu = 1
 batch_size = 16
 
 # data will be temporarily saved in this directory; it will be removed after testing
