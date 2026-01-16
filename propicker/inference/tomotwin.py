@@ -14,8 +14,6 @@ def load_tomotwin_model(weightspth, load_weights=True, device=None):
     else:
         checkpoint = torch.load(weightspth)
     tomotwin_config = checkpoint["tomotwin_config"]
-    print("Model config:")
-    print(tomotwin_config)
     model = NetworkManager.create_network(tomotwin_config).get_model()
     if load_weights:
         before_parallel_failed = False
@@ -28,7 +26,6 @@ def load_tomotwin_model(weightspth, load_weights=True, device=None):
         #model = torch.nn.DataParallel(model)
         if before_parallel_failed:
             model.load_state_dict(checkpoint["model_state_dict"])
-        print("Successfully loaded model weights")
     else:
         print("Model weights not loaded")
     return model.to(device)
