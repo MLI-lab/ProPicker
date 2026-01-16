@@ -27,20 +27,24 @@
     ```
 
 ## Usage
-There are two main workflows: prompt-based picking and fine-tuning. We provide tutorials for both.
 
-### Workflow 1: Prompt-Based Picking 
+This repository serves two complementary purposes:
+(i) demonstrating how experiments in the paper were executed, using representative examples provided as scripts and Jupyter notebooks, and
+(ii) enabling interactive exploration of ProPicker via a GUI.
 
-Prompt-based picking can be done via both the Python package and the GUI/CLI. There are separate tutorials for both:
+### Demonstrating experimental workflows from the paper
 
-- **Python Package Tutorial:** See the `TUTORIAL1:empiar10988_prompt_based_picking.ipynb` notebook.
+- **Prompt-based picking:** `python_tutorial/tutorial1:prompt_based_picking/tutorial.ipynb`
+- **Fine-tuning:** `python_tutorial/tutorial2:fine_tuning/tutorial.ipynb` (continues from Tutorial 1)
 
-- **GUI/CLI Tutorial:** See the our [gui_tutorial](gui_tutorial/README.md).
+These notebooks constitute the recommended entry point for readers who want to try ProPicker and reproduce the qualitative behavior and performance trends reported in the paper.
 
+### Interactive exploration via GUI
 
-### Workflow 2: Fine-Tuning ProPicker
+In addition, we provide a GUI/CLI for interactive exploration and application of ProPicker. The GUI uses the same underlying model and inference code, but is intended for exploratory use rather than for reproducing the quantitative results reported in the paper.
 
-Fine-tuning currently only works via the Python package and additional scripts. See the `TUTORIAL2:empiar10988_fine_tuning.ipynb` notebook, which continues from the first tutorial.
+- **GUI tutorial:** see `gui_tutorial/README.md`
+
 
 
 ## Training ProPicker from Scratch
