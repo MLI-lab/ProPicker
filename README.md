@@ -34,8 +34,8 @@ The repo covers [prompt-based picking](https://github.com/MLI-lab/ProPicker/blob
 
 We provide Jupyter notebooks as entry points for readers who want to try ProPicker or reproduce the qualitative behavior and performance trends reported in the paper.
 
-- **Prompt-based picking:** [`python_tutorial/tutorial1:prompt_based_picking/tutorial.ipynb`](https://github.com/MLI-lab/ProPicker/blob/main/python_tutorial/tutorial1%3Aprompt_based_picking/tutorial.ipynb)
-- **Fine-tuning:** [`python_tutorial/tutorial2:fine_tuning/tutorial.ipynb`](https://github.com/MLI-lab/ProPicker/blob/main/python_tutorial/tutorial2%3Afine_tuning/tutorial.ipynb) (continues from prompt-based picking)
+- **Prompt-based picking:** [`python_tutorial/tutorial_1_prompt_based_picking/tutorial.ipynb`](https://github.com/MLI-lab/ProPicker/blob/main/python_tutorial/tutorial_1_prompt_based_picking/tutorial.ipynb)
+- **Fine-tuning:** [`python_tutorial/tutorial_2_fine_tuning/tutorial.ipynb`](https://github.com/MLI-lab/ProPicker/blob/main/python_tutorial/tutorial_2_fine_tuning/tutorial.ipynb) (continues from prompt-based picking)
 
 ### (II) Experimental: Interactive exploration via GUI 
 
